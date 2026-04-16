@@ -33,6 +33,11 @@
           <input id="fixedCharge" type="number" min="0" step="0.01" placeholder="Ejemplo: 100" required>
         </label>
 
+        <label class="field">
+          <span>Impuesto DGII (%)</span>
+          <input id="taxRate" type="number" min="0" step="0.0001" placeholder="Ejemplo: 0.15" required>
+        </label>
+
         <label class="field field--full">
           <span>Numero de WhatsApp (opcional)</span>
           <input id="phoneNumber" type="text" inputmode="tel" placeholder="Ejemplo: 59177777777">
@@ -53,7 +58,7 @@
         </article>
 
         <article class="card card--danger">
-          <p class="card__label">Impuesto DGII (0.15%)</p>
+          <p class="card__label" id="taxLabel">Impuesto DGII (0.15%)</p>
           <p class="card__value" id="taxAmount">- RD$ 0.00</p>
         </article>
 
@@ -71,7 +76,7 @@
       <section class="summary">
         <h2>Formula usada</h2>
         <p id="summaryText">
-          Neto en DOP = (USD x tasa) - impuesto DGII 0.15% - cargo fijo.
+          Neto en DOP = (USD x tasa) - impuesto DGII editable - cargo fijo.
         </p>
       </section>
 

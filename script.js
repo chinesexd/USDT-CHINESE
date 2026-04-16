@@ -2,17 +2,19 @@ const form = document.getElementById("converter-form");
 const amountUsdInput = document.getElementById("amountUsd");
 const exchangeRateInput = document.getElementById("exchangeRate");
 const fixedChargeInput = document.getElementById("fixedCharge");
+const taxRateInput = document.getElementById("taxRate");
 const phoneNumberInput = document.getElementById("phoneNumber");
 const whatsappButton = document.getElementById("whatsappButton");
 const statusMessage = document.getElementById("statusMessage");
 
 const grossAmount = document.getElementById("grossAmount");
+const taxLabel = document.getElementById("taxLabel");
 const taxAmount = document.getElementById("taxAmount");
 const chargeAmount = document.getElementById("chargeAmount");
 const netAmount = document.getElementById("netAmount");
 const summaryText = document.getElementById("summaryText");
 
-const FINAL_RATE = 0.0015;
+const DEFAULT_TAX_RATE = 0.15;
 let lastCalculation = null;
 
 function formatCurrency(value, showMinus = false) {
@@ -20,15 +22,20 @@ function formatCurrency(value, showMinus = false) {
   return `${prefix}${value.toFixed(2)}`;
 }
 
-function calculateValues(amountUsd, exchangeRate, fixedCharge) {
+function formatPercent(value) {
+  return `${value.toFixed(4).replace(/\.?0+$/, "")}%`;
+}
+
+function calculateValues(amountUsd, exchangeRate, fixedCharge, taxRatePercent) {
   const gross = amountUsd * exchangeRate;
-  const tax = gross * FINAL_RATE;
+  const tax = gross * (taxRatePercent / 100);
   const net = gross - tax - fixedCharge;
 
   return {
     gross,
     tax,
     fixedCharge,
+    taxRatePercent,
     net
   };
 }
@@ -61,7 +68,7 @@ function buildWhatsappMessage(calculation) {
     "",
     "Desglose",
     `Equivalente bruto: RD$ ${calculation.gross.toFixed(2)}`,
-    `Impuesto DGII (0.15%): - RD$ ${calculation.tax.toFixed(2)}`,
+    `Impuesto DGII (${formatPercent(calculation.taxRatePercent)}): - RD$ ${calculation.tax.toFixed(2)}`,
     `Comision bancaria: - RD$ ${calculation.fixedCharge.toFixed(2)}`,
     "",
     "Total neto a recibir",
@@ -77,8 +84,9 @@ form.addEventListener("submit", (event) => {
   const amountUsd = Number(amountUsdInput.value);
   const exchangeRate = Number(exchangeRateInput.value);
   const fixedCharge = Number(fixedChargeInput.value);
+  const taxRatePercent = Number(taxRateInput.value);
 
-  if ([amountUsd, exchangeRate, fixedCharge].some((value) => Number.isNaN(value) || value < 0)) {
+  if ([amountUsd, exchangeRate, fixedCharge, taxRatePercent].some((value) => Number.isNaN(value) || value < 0)) {
     statusMessage.textContent = "Asegurate de ingresar solo numeros validos.";
     resetResults();
     lastCalculation = null;
@@ -89,7 +97,8 @@ form.addEventListener("submit", (event) => {
   const { gross, tax, net } = calculateValues(
     amountUsd,
     exchangeRate,
-    fixedCharge
+    fixedCharge,
+    taxRatePercent
   );
 
   if (net < 0) {
@@ -101,6 +110,7 @@ form.addEventListener("submit", (event) => {
   }
 
   statusMessage.textContent = "";
+  taxLabel.textContent = `Impuesto DGII (${formatPercent(taxRatePercent)})`;
   grossAmount.textContent = formatCurrency(gross);
   taxAmount.textContent = formatCurrency(tax, true);
   chargeAmount.textContent = formatCurrency(fixedCharge, true);
@@ -109,6 +119,7 @@ form.addEventListener("submit", (event) => {
     amountUsd,
     exchangeRate,
     fixedCharge,
+    taxRatePercent,
     gross,
     tax,
     net
@@ -116,7 +127,7 @@ form.addEventListener("submit", (event) => {
 
   summaryText.textContent =
     `${amountUsd.toFixed(2)} USD x ${exchangeRate.toFixed(4)} = RD$ ${gross.toFixed(2)}. ` +
-    `Se descuenta DGII por RD$ ${tax.toFixed(2)} y comision por RD$ ${fixedCharge.toFixed(2)}.`;
+    `Se descuenta DGII (${formatPercent(taxRatePercent)}) por RD$ ${tax.toFixed(2)} y comision por RD$ ${fixedCharge.toFixed(2)}.`;
 });
 
 whatsappButton.addEventListener("click", () => {
@@ -129,13 +140,14 @@ whatsappButton.addEventListener("click", () => {
   const phoneNumber = sanitizePhoneNumber(phoneNumberInput.value);
   const message = encodeURIComponent(buildWhatsappMessage(lastCalculation));
   const baseUrl = phoneNumber
-    ? `https://wa.me/${phoneNumber}?text=${message}`
-    : `https://wa.me/?text=${message}`;
+    ? `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${message}`
+    : `https://api.whatsapp.com/send?text=${message}`;
 
-  window.open(baseUrl, "_blank", "noopener,noreferrer");
+  window.location.href = baseUrl;
 });
 
-amountUsdInput.value = "100";
-exchangeRateInput.value = "60";
-fixedChargeInput.value = "100";
-form.requestSubmit();
+amountUsdInput.value = "";
+exchangeRateInput.value = "";
+fixedChargeInput.value = "";
+taxRateInput.value = String(DEFAULT_TAX_RATE);
+resetResults();
