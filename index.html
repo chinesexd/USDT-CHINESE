@@ -406,7 +406,7 @@
     <!-- NAVIGATION BAR & ADMIN STATUS -->
     <nav class="nav-tabs">
         <div class="tabs-group">
-            <button class="tab-btn active" onclick="activateTab('tab-daily', this)">📅 Programa del Día (<span id="currentDayBadge">HOY</span>)</button>
+            <button class="tab-btn active" onclick="activateTab('tab-daily', this)">📅 Programa del Día</button>
             <button class="tab-btn" onclick="activateTab('tab-personal', this)">👥 Horario Semanal Personal</button>
             <button class="tab-btn" onclick="activateTab('tab-champions', this)">👑 Group Champions</button>
             <button class="tab-btn" onclick="activateTab('tab-responsabilidades', this)">📋 Responsabilidades y Roles</button>
@@ -434,7 +434,7 @@
 
             <div class="card-table">
                 <div class="table-header-title">
-                    <span>Asignaciones de Llamadas - <span id="dayTitleDisplay" style="color: var(--accent-amber);">LUNES</span></span>
+                    <span>Asignaciones de Trabajo - <span id="dayTitleDisplay" style="color: var(--accent-amber);">LUNES</span></span>
                     <button class="btn-action admin-only" onclick="openModal('modal-daily')">+ Agregar Asignación</button>
                 </div>
                 <table>
@@ -557,6 +557,16 @@
     </div>
 
     <script id="main-script">
+        // MAPEO DE DÍAS A ESPAÑOL COMPLETO
+        const spanishDays = {
+            MON: 'LUNES',
+            TUE: 'MARTES',
+            WED: 'MIÉRCOLES',
+            THU: 'JUEVES',
+            FRI: 'VIERNES',
+            SUN: 'DOMINGO'
+        };
+
         // ADMIN AUTHENTICATION
         let isAdmin = false;
 
@@ -641,7 +651,7 @@
             const ampm = hours >= 12 ? 'PM' : 'AM';
 
             hours = hours % 12;
-            hours = hours ? hours : 12; // La hora '0' pasa a ser '12'
+            hours = hours ? hours : 12;
             const formattedHours = String(hours).padStart(2, '0');
 
             document.getElementById('realtimeClock').textContent = `${formattedHours}:${minutes}:${seconds} ${ampm}`;
@@ -652,8 +662,7 @@
         // RENDER DAILY SCHEDULE
         function renderDailySchedule() {
             const tbody = document.getElementById('dailyTableBody');
-            document.getElementById('dayTitleDisplay').textContent = activeDay;
-            document.getElementById('currentDayBadge').textContent = activeDay;
+            document.getElementById('dayTitleDisplay').textContent = spanishDays[activeDay] || activeDay;
             tbody.innerHTML = '';
 
             const items = clinicSchedule[activeDay] || [];
@@ -828,7 +837,6 @@
             saveAllData();
             let htmlCopy = document.documentElement.outerHTML;
 
-            // Inyectar datos actuales directamente en los arreglos por defecto
             htmlCopy = htmlCopy.replace(/let defaultStaffRoster = \[[\s\S]*?\];/, `let defaultStaffRoster = ${JSON.stringify(staffRoster, null, 4)};`);
             htmlCopy = htmlCopy.replace(/let defaultClinicSchedule = \{[\s\S]*?\};/, `let defaultClinicSchedule = ${JSON.stringify(clinicSchedule, null, 4)};`);
             htmlCopy = htmlCopy.replace(/let defaultChampions = \[[\s\S]*?\];/, `let defaultChampions = ${JSON.stringify(championsData, null, 4)};`);
