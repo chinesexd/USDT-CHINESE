@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="es"><head>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Control de Proyecto - TV Mode (Admin System)</title>
@@ -377,7 +378,7 @@
         }
     </style>
 </head>
-<body class="is-admin">
+<body>
 
     <!-- TOP HEADER -->
     <header>
@@ -398,23 +399,23 @@
                 <option value="FRI">VIERNES</option>
                 <option value="SUN">DOMINGO</option>
             </select>
-            <div id="realtimeClock" class="clock-box">03:05:47 PM</div>
+            <div id="realtimeClock" class="clock-box">12:00:00 AM</div>
         </div>
     </header>
 
     <!-- NAVIGATION BAR & ADMIN STATUS -->
     <nav class="nav-tabs">
         <div class="tabs-group">
-            <button class="tab-btn" onclick="activateTab('tab-daily', this)">📅 Programa del Día</button>
+            <button class="tab-btn active" onclick="activateTab('tab-daily', this)">📅 Programa del Día</button>
             <button class="tab-btn" onclick="activateTab('tab-personal', this)">👥 Horario Semanal Personal</button>
-            <button class="tab-btn active" onclick="activateTab('tab-champions', this)">👑 Group Champions</button>
+            <button class="tab-btn" onclick="activateTab('tab-champions', this)">👑 Group Champions</button>
             <button class="tab-btn" onclick="activateTab('tab-responsabilidades', this)">📋 Responsabilidades y Roles</button>
         </div>
 
         <div id="adminStatusContainer" style="display: flex; gap: 0.5rem; align-items: center;">
             <button class="btn-export admin-only" onclick="exportHTML()">📥 Descargar HTML Actualizado</button>
-            <button id="btnLogin" class="btn-login" onclick="openModal('modal-login')" style="display: none;">🔒 Iniciar Sesión (Admin)</button>
-            <div id="adminBadge" class="admin-badge logged-in" style="display: flex;">
+            <button id="btnLogin" class="btn-login" onclick="openModal('modal-login')">🔒 Iniciar Sesión (Admin)</button>
+            <div id="adminBadge" class="admin-badge logged-in" style="display: none;">
                 👤 Admin: <strong>chinese</strong>
                 <button class="btn-danger" style="margin-left: 0.5rem;" onclick="logoutAdmin()">Salir</button>
             </div>
@@ -425,7 +426,7 @@
     <main>
 
         <!-- VIEW 1: DAILY PROGRAM -->
-        <section id="tab-daily" class="tab-content">
+        <section id="tab-daily" class="tab-content active">
             <div class="alert-banner">
                 <h4 id="bannerTitle">📌 Mensajería Masiva Automática (SMS / WhatsApp)</h4>
                 <p id="bannerDesc">Campañas activas: Return to Care (Non-Utilizer) | Cervical Cancer Screening | Wellchild Visit</p>
@@ -433,7 +434,7 @@
 
             <div class="card-table">
                 <div class="table-header-title">
-                    <span>Asignaciones de Trabajo - <span id="dayTitleDisplay" style="color: var(--accent-amber);">DOMINGO</span></span>
+                    <span>Asignaciones de Trabajo - <span id="dayTitleDisplay" style="color: var(--accent-amber);">LUNES</span></span>
                     <button class="btn-action admin-only" onclick="openModal('modal-daily')">+ Agregar Asignación</button>
                 </div>
                 <table>
@@ -446,7 +447,7 @@
                             <th class="admin-only" style="width: 10%;">Acción</th>
                         </tr>
                     </thead>
-                    <tbody id="dailyTableBody"><tr><td colspan="5" style="text-align:center;">No hay turnos registrados.</td></tr></tbody>
+                    <tbody id="dailyTableBody"></tbody>
                 </table>
             </div>
         </section>
@@ -472,83 +473,17 @@
                             <th class="admin-only">Acción</th>
                         </tr>
                     </thead>
-                    <tbody id="personalTableBody"><tr>
-                    <td style="font-weight: 800; color:#FFF;" contenteditable="true" onblur="editStaffData(0, 'name', this.innerText)">GEIDI</td>
-                    <td style="color: var(--accent-amber); font-weight:700;" contenteditable="true" onblur="editStaffData(0, 'breakTime', this.innerText)">1:00 PM - 2:00 PM</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(0, 'MON', this.innerText)">2 – 9pm</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(0, 'TUE', this.innerText)">10 – 5pm</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(0, 'WED', this.innerText)">10 – 1 / 2 – 9pm</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(0, 'THU', this.innerText)">10am – 9pm</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(0, 'FRI', this.innerText)">10 – 7pm</td>
-                    <td class="highlight-day-cell" contenteditable="true" onblur="editStaffData(0, 'SUN', this.innerText)">11 – 4pm</td>
-                    <td class="admin-only"><button class="btn-danger" onclick="deleteStaff(0)">🗑️</button></td>
-                </tr><tr>
-                    <td style="font-weight: 800; color:#FFF;" contenteditable="true" onblur="editStaffData(1, 'name', this.innerText)">ORAYMI</td>
-                    <td style="color: var(--accent-amber); font-weight:700;" contenteditable="true" onblur="editStaffData(1, 'breakTime', this.innerText)">2:00 PM - 3:00 PM</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(1, 'MON', this.innerText)">11am – 9pm</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(1, 'TUE', this.innerText)">11am – 9pm</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(1, 'WED', this.innerText)">9:00am – 6:00pm</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(1, 'THU', this.innerText)">11am – 9pm</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(1, 'FRI', this.innerText)">9am – 5pm</td>
-                    <td class="highlight-day-cell" contenteditable="true" onblur="editStaffData(1, 'SUN', this.innerText)">Risk?</td>
-                    <td class="admin-only"><button class="btn-danger" onclick="deleteStaff(1)">🗑️</button></td>
-                </tr><tr>
-                    <td style="font-weight: 800; color:#FFF;" contenteditable="true" onblur="editStaffData(2, 'name', this.innerText)">JARY</td>
-                    <td style="color: var(--accent-amber); font-weight:700;" contenteditable="true" onblur="editStaffData(2, 'breakTime', this.innerText)">12:00 PM - 1:00 PM</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(2, 'MON', this.innerText)">9 AM – 3 PM</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(2, 'TUE', this.innerText)">9 AM – 4 PM</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(2, 'WED', this.innerText)">9 AM – 7 PM</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(2, 'THU', this.innerText)">9 AM – 4:30 PM</td>
-                    <td class="" contenteditable="true" onblur="editStaffData(2, 'FRI', this.innerText)">9 AM – 7 PM</td>
-                    <td class="highlight-day-cell" contenteditable="true" onblur="editStaffData(2, 'SUN', this.innerText)">-</td>
-                    <td class="admin-only"><button class="btn-danger" onclick="deleteStaff(2)">🗑️</button></td>
-                </tr></tbody>
+                    <tbody id="personalTableBody"></tbody>
                 </table>
             </div>
         </section>
 
         <!-- VIEW 3: CHAMPIONS -->
-        <section id="tab-champions" class="tab-content active">
+        <section id="tab-champions" class="tab-content">
             <div style="margin-bottom: 1rem; display: flex; justify-content: flex-end;">
                 <button class="btn-action admin-only" onclick="openModal('modal-champion')">+ Agregar Champion</button>
             </div>
-            <div class="grid-3" id="championsGrid"><div class="info-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="color: var(--accent-cyan);" contenteditable="true" onblur="updateChampData(0, 'name', this.innerText)">👑 Oraymi</h3>
-                        <button class="btn-danger admin-only" onclick="deleteChampion(0)">🗑️</button>
-                    </div>
-                    <div class="sub-role" contenteditable="true" onblur="updateChampData(0, 'role', this.innerText)">Group Leader Cronos</div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);" contenteditable="true" onblur="updateChampData(0, 'desc', this.innerText)">Líder de Estrategia y Control Operativo de Llamadas</p>
-                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
-                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
-                    <ul class="custom-list" contenteditable="true" onblur="updateChampClinics(0, this)">
-                        <li>Junction</li><li>Florimon</li><li>NYPC</li><li>UMO</li><li>Stephen Perez</li><li>Fort Washington</li>
-                    </ul>
-                </div><div class="info-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="color: var(--accent-cyan);" contenteditable="true" onblur="updateChampData(1, 'name', this.innerText)">👑 Waleska</h3>
-                        <button class="btn-danger admin-only" onclick="deleteChampion(1)">🗑️</button>
-                    </div>
-                    <div class="sub-role" contenteditable="true" onblur="updateChampData(1, 'role', this.innerText)">Group&nbsp; Horizonte</div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);" contenteditable="true" onblur="updateChampData(1, 'desc', this.innerText)">Líder de Estrategia</p>
-                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
-                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
-                    <ul class="custom-list" contenteditable="true" onblur="updateChampClinics(1, this)">
-                        <li>BCE</li><li>GODWIN</li><li>JOSE APONTE</li><li>TOMMY</li><li>AMERICA</li><li>COLUMBUS</li>
-                    </ul>
-                </div><div class="info-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="color: var(--accent-cyan);" contenteditable="true" onblur="updateChampData(2, 'name', this.innerText)">👑 Alberto</h3>
-                        <button class="btn-danger admin-only" onclick="deleteChampion(2)">🗑️</button>
-                    </div>
-                    <div class="sub-role" contenteditable="true" onblur="updateChampData(2, 'role', this.innerText)">Group Leader Europa</div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);" contenteditable="true" onblur="updateChampData(2, 'desc', this.innerText)">Gerente General-Líder de Estrategia y Control Operativo</p>
-                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
-                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
-                    <ul class="custom-list" contenteditable="true" onblur="updateChampClinics(2, this)">
-                        <li>GORIS</li><li>PATEL</li><li>JEROME</li><li>GENERAL</li><li>JANNY OZUNA</li><li>WILLIAMS BURG</li><li>NIKI PATEL</li>
-                    </ul>
-                </div></div>
+            <div class="grid-3" id="championsGrid"></div>
         </section>
 
         <!-- VIEW 4: ROLES AND RESPONSIBILITIES -->
@@ -556,29 +491,13 @@
             <div style="margin-bottom: 1rem; display: flex; justify-content: flex-end;">
                 <button class="btn-action admin-only" onclick="openModal('modal-role')">+ Agregar Nuevo Rol / Miembro</button>
             </div>
-            <div class="grid-3" id="rolesGrid"><div class="info-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="color: var(--accent-cyan);" contenteditable="true" onblur="updateRoleTitle(0, this.innerText)">Geidi</h3>
-                        <button class="btn-danger admin-only" onclick="deleteRoleCard(0)">🗑️</button>
-                    </div>
-                    <ul class="custom-list" contenteditable="true" onblur="updateRoleTasks(0, this)">
-                        <li>Llamadas y mensajes: SMS, WhatsApp, Email.</li><li>Revisión de medidas exitosas.</li><li>Reporte de avances.</li>
-                    </ul>
-                </div><div class="info-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="color: var(--accent-cyan);" contenteditable="true" onblur="updateRoleTitle(1, this.innerText)">Jary</h3>
-                        <button class="btn-danger admin-only" onclick="deleteRoleCard(1)">🗑️</button>
-                    </div>
-                    <ul class="custom-list" contenteditable="true" onblur="updateRoleTasks(1, this)">
-                        <li>Recertificaciones.</li><li>Wellcare Track Agendas.</li><li>Apoyo a Email de Seguros.</li>
-                    </ul>
-                </div></div>
+            <div class="grid-3" id="rolesGrid"></div>
         </section>
 
     </main>
 
     <!-- LOGIN MODAL -->
-    <div id="modal-login" class="modal" style="display: none;">
+    <div id="modal-login" class="modal">
         <div class="modal-content">
             <h3 style="color: var(--accent-cyan);">Acceso Administrador</h3>
             <input type="text" id="loginUser" placeholder="Usuario">
@@ -648,7 +567,7 @@
             SUN: 'DOMINGO'
         };
 
-        // ADMIN AUTHENTICATION
+        // ADMIN AUTHENTICATION - SIEMPRE DESACTIVADO POR DEFECTO
         let isAdmin = false;
 
         function loginAdmin() {
@@ -657,12 +576,9 @@
 
             if (u === 'chinese' && p === '2122') {
                 isAdmin = true;
-                document.body.classList.add('is-admin');
-                document.getElementById('btnLogin').style.display = 'none';
-                document.getElementById('adminBadge').style.display = 'flex';
-                document.getElementById('loginError').style.display = 'none';
+                sessionStorage.setItem('isAdmin', 'true'); // Guardar solo para esta sesión de pestaña
+                applyAdminState();
                 closeModal('modal-login');
-                renderAll();
             } else {
                 document.getElementById('loginError').style.display = 'block';
             }
@@ -670,136 +586,53 @@
 
         function logoutAdmin() {
             isAdmin = false;
-            document.body.classList.remove('is-admin');
-            document.getElementById('btnLogin').style.display = 'inline-block';
-            document.getElementById('adminBadge').style.display = 'none';
+            sessionStorage.removeItem('isAdmin');
+            applyAdminState();
+        }
+
+        function applyAdminState() {
+            if (isAdmin) {
+                document.body.classList.add('is-admin');
+                document.getElementById('btnLogin').style.display = 'none';
+                document.getElementById('adminBadge').style.display = 'flex';
+            } else {
+                document.body.classList.remove('is-admin');
+                document.getElementById('btnLogin').style.display = 'inline-block';
+                document.getElementById('adminBadge').style.display = 'none';
+            }
             renderAll();
+        }
+
+        // VERIFICAR SESIÓN DE ADMIN AL CARGAR
+        if (sessionStorage.getItem('isAdmin') === 'true') {
+            isAdmin = true;
         }
 
         // DEFAULT DATA STRUCTURES
         let defaultStaffRoster = [
-    {
-        "name": "GEIDI",
-        "breakTime": "1:00 PM - 2:00 PM",
-        "MON": "2 – 9pm",
-        "TUE": "10 – 5pm",
-        "WED": "10 – 1 / 2 – 9pm",
-        "THU": "10am – 9pm",
-        "FRI": "10 – 7pm",
-        "SUN": "11 – 4pm"
-    },
-    {
-        "name": "ORAYMI",
-        "breakTime": "2:00 PM - 3:00 PM",
-        "MON": "11am – 9pm",
-        "TUE": "11am – 9pm",
-        "WED": "9:00am – 6:00pm",
-        "THU": "11am – 9pm",
-        "FRI": "9am – 5pm",
-        "SUN": "Risk?"
-    },
-    {
-        "name": "JARY",
-        "breakTime": "12:00 PM - 1:00 PM",
-        "MON": "9 AM – 3 PM",
-        "TUE": "9 AM – 4 PM",
-        "WED": "9 AM – 7 PM",
-        "THU": "9 AM – 4:30 PM",
-        "FRI": "9 AM – 7 PM",
-        "SUN": "-"
-    }
-];
+            { name: 'GEIDI', breakTime: '1:00 PM - 2:00 PM', MON: '2 – 9pm', TUE: '10 – 5pm', WED: '10 – 1 / 2 – 9pm', THU: '10am – 9pm', FRI: '10 – 7pm', SUN: '11 – 4pm' },
+            { name: 'ORAYMI', breakTime: '2:00 PM - 3:00 PM', MON: '11am – 9pm', TUE: '11am – 9pm', WED: '9:00am – 6:00pm', THU: '11am – 9pm', FRI: '9am – 5pm', SUN: 'Risk?' },
+            { name: 'JARY', breakTime: '12:00 PM - 1:00 PM', MON: '9 AM – 3 PM', TUE: '9 AM – 4 PM', WED: '9 AM – 7 PM', THU: '9 AM – 4:30 PM', FRI: '9 AM – 7 PM', SUN: '-' }
+        ];
 
         let defaultClinicSchedule = {
-    "MON": [
-        {
-            "clinic": "GALANIS",
-            "task": "CALL",
-            "name": "Oraymi",
-            "time": "11:00 am - 1:00 pm"
-        },
-        {
-            "clinic": "APONTE",
-            "task": "CALL",
-            "name": "Daihana",
-            "time": "11:00 am - 2:00 pm"
-        }
-    ],
-    "TUE": [],
-    "WED": [
-        {
-            "clinic": "GORIS",
-            "task": "CALL",
-            "name": "Geidy",
-            "time": "11:00 am - 1:00 pm"
-        }
-    ],
-    "THU": [],
-    "FRI": [],
-    "SUN": []
-};
+            MON: [
+                { clinic: 'GALANIS', task: 'CALL', name: 'Oraymi', time: '11:00 am - 1:00 pm' },
+                { clinic: 'APONTE', task: 'CALL', name: 'Daihana', time: '11:00 am - 2:00 pm' }
+            ],
+            TUE: [], WED: [], THU: [], FRI: [], SUN: []
+        };
 
         let defaultChampions = [
-    {
-        "name": "👑 Oraymi",
-        "role": "Group Leader Cronos",
-        "desc": "Líder de Estrategia y Control Operativo de Llamadas",
-        "clinics": [
-            "Junction",
-            "Florimon",
-            "NYPC",
-            "UMO",
-            "Stephen Perez",
-            "Fort Washington"
-        ]
-    },
-    {
-        "name": "👑 Waleska",
-        "role": "Group  Horizonte",
-        "desc": "Líder de Estrategia",
-        "clinics": [
-            "BCE",
-            "GODWIN",
-            "JOSE APONTE",
-            "TOMMY",
-            "AMERICA",
-            "COLUMBUS"
-        ]
-    },
-    {
-        "name": "👑 Alberto",
-        "role": "Group Leader Europa",
-        "desc": "Gerente General-Líder de Estrategia y Control Operativo",
-        "clinics": [
-            "GORIS",
-            "PATEL",
-            "JEROME",
-            "GENERAL",
-            "JANNY OZUNA",
-            "WILLIAMS BURG",
-            "NIKI PATEL"
-        ]
-    }
-];
+            { name: '👑 Oraymi', role: 'Group Leader Cronos', desc: 'Lunes a Jueves (6 PM – 9 PM)', clinics: ['Junction', 'Florimon', 'NYPC', 'UMO', 'Stephen Perez', 'Fort Washington'] },
+            { name: '👑 Maria', role: 'Group Leader Horizonte', desc: 'Líder de Estrategia y Control Operativo', clinics: ['BCE', 'GODWIN', 'JOSE APONTE', 'TOMMY', 'AMERICA', 'COLUMBUS'] },
+            { name: '👑 Alberto', role: 'Group Leader Europa', desc: 'Supervisión General de Procesos', clinics: ['JAG', 'PATEL', 'JEROME', 'GENERAL', 'JANNY OZUNA', 'WILLIAMS BURG'] }
+        ];
 
         let defaultRoles = [
-    {
-        "title": "Geidi",
-        "tasks": [
-            "Llamadas y mensajes: SMS, WhatsApp, Email.",
-            "Revisión de medidas exitosas.",
-            "Reporte de avances."
-        ]
-    },
-    {
-        "title": "Jary",
-        "tasks": [
-            "Recertificaciones.",
-            "Wellcare Track Agendas.",
-            "Apoyo a Email de Seguros."
-        ]
-    }
-];
+            { title: 'Geidi', tasks: ['Llamadas y mensajes: SMS, WhatsApp, Email.', 'Revisión de medidas exitosas.', 'Reporte de avances.'] },
+            { title: 'Jary', tasks: ['Recertificaciones.', 'Wellcare Track Agendas.', 'Apoyo a Email de Seguros.'] }
+        ];
 
         // LOCAL STORAGE LOAD
         let staffRoster = JSON.parse(localStorage.getItem('staffRoster')) || defaultStaffRoster;
@@ -1012,10 +845,20 @@
             document.getElementById('newRoleTitle').value = ''; document.getElementById('newRoleTasks').value = '';
         }
 
-        // EXPORT UPDATED HTML WITH INLINED DATA
+        // EXPORT UPDATED HTML WITH INLINED DATA & FORCED USER MODE
         function exportHTML() {
             saveAllData();
+            
+            // Forzar logout antes de exportar
+            let wasAdmin = isAdmin;
+            isAdmin = false;
+            sessionStorage.removeItem('isAdmin');
+            applyAdminState();
+
             let htmlCopy = document.documentElement.outerHTML;
+
+            // Limpiar clases de admin en la exportación
+            htmlCopy = htmlCopy.replace('<body class="is-admin">', '<body>');
 
             htmlCopy = htmlCopy.replace(/let defaultStaffRoster = \[[\s\S]*?\];/, `let defaultStaffRoster = ${JSON.stringify(staffRoster, null, 4)};`);
             htmlCopy = htmlCopy.replace(/let defaultClinicSchedule = \{[\s\S]*?\};/, `let defaultClinicSchedule = ${JSON.stringify(clinicSchedule, null, 4)};`);
@@ -1027,6 +870,13 @@
             a.href = URL.createObjectURL(blob);
             a.download = "index.html";
             a.click();
+
+            // Restaurar estado si estaba en admin
+            if (wasAdmin) {
+                isAdmin = true;
+                sessionStorage.setItem('isAdmin', 'true');
+                applyAdminState();
+            }
         }
 
         // CONTROL UTILS
@@ -1056,8 +906,7 @@
 
         // INITIALIZE APP
         document.getElementById('daySelect').value = activeDay;
-        renderAll();
+        applyAdminState();
     </script>
-
-
-</body></html>
+</body>
+</html>
