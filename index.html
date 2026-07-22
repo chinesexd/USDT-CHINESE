@@ -3,555 +3,401 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Control de Proyecto - TV Mode (Admin System)</title>
+    <title>Dashboard de Operaciones y Horarios</title>
     <style>
         :root {
-            --bg-main: #0B0F19;
-            --bg-card: #151C2C;
-            --bg-card-alt: #1E293B;
-            --accent-cyan: #38BDF8;
-            --accent-green: #22C55E;
-            --accent-purple: #C084FC;
-            --accent-amber: #F59E0B;
-            --accent-rose: #FB7185;
-            --text-primary: #F8FAFC;
-            --text-secondary: #94A3B8;
-            --border: #334155;
-            --glow: rgba(56, 189, 248, 0.25);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --accent-amber: #f59e0b;
+            --accent-blue: #3b82f6;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --danger-color: #ef4444;
         }
 
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
             color: var(--text-primary);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            padding: 1.25rem;
-            gap: 1.25rem;
+            margin: 0;
+            padding: 20px;
         }
 
-        /* TV HEADER */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(135deg, #151C2C 0%, #0F172A 100%);
-            padding: 1rem 2rem;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
         }
 
-        .header-title-container {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
+        .clock-container {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-amber);
+            background: rgba(245, 158, 11, 0.1);
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--accent-amber);
         }
 
-        .header-title {
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 1px;
-            background: linear-gradient(90deg, #38BDF8, #818CF8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-        }
-
-        .live-indicator {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--accent-green);
-            border: 1px solid var(--accent-green);
-            padding: 0.3rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-transform: uppercase;
-        }
-
-        .live-dot {
-            width: 9px;
-            height: 9px;
-            background-color: var(--accent-green);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--accent-green);
-            animation: pulseDot 1.5s infinite;
-        }
-
-        @keyframes pulseDot {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.3); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-        }
-
-        .day-select {
-            background: var(--bg-card-alt);
-            color: var(--accent-cyan);
-            border: 1px solid var(--accent-cyan);
-            padding: 0.5rem 1.2rem;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 800;
-            outline: none;
+        .btn-login, .btn-admin {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
             cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
         }
 
-        .clock-box {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 2rem;
-            font-weight: 900;
-            color: #FFFFFF;
-            background: rgba(15, 23, 42, 0.8);
-            padding: 0.3rem 1.2rem;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            min-width: 220px;
-            text-align: center;
+        .btn-login {
+            background-color: var(--accent-blue);
+            color: white;
         }
 
-        /* NAVIGATION TABS */
-        .nav-tabs {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .tabs-group {
-            display: flex;
-            gap: 0.8rem;
-        }
-
-        .tab-btn {
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-            padding: 0.8rem 1.6rem;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn.active {
-            background: var(--accent-cyan);
-            color: #0B0F19;
-            border-color: var(--accent-cyan);
-            font-weight: 900;
-            box-shadow: 0 0 15px var(--glow);
         }
 
         .admin-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 800;
-            font-size: 0.9rem;
-            display: flex;
+            display: none;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
         }
 
-        .admin-badge.logged-in {
-            background: rgba(34, 197, 94, 0.2);
-            color: var(--accent-green);
-            border: 1px solid var(--accent-green);
+        body.is-admin .admin-only {
+            display: table-cell !important;
+        }
+        
+        div.admin-only, button.admin-only {
+            display: none;
         }
 
-        /* MAIN CONTENT VIEWS */
-        main {
-            flex: 1;
-            overflow: hidden;
-            position: relative;
+        body.is-admin div.admin-only, 
+        body.is-admin button.admin-only {
+            display: inline-block !important;
+        }
+
+        .admin-only {
+            display: none;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background-color: var(--card-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
         }
 
         .tab-content {
             display: none;
-            height: 100%;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
             width: 100%;
-            overflow-y: auto;
-            padding-right: 0.4rem;
+            border-collapse: collapse;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
 
-        .tab-content.active { display: block; }
-
-        .tab-content::-webkit-scrollbar { width: 6px; }
-        .tab-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-        /* BANNER ALERTS */
-        .alert-banner {
-            background: rgba(192, 132, 252, 0.1);
-            border-left: 5px solid var(--accent-purple);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.25rem;
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .alert-banner h4 { color: var(--accent-purple); font-size: 1.1rem; font-weight: 800; margin-bottom: 0.2rem; }
-        .alert-banner p { color: var(--text-primary); font-size: 0.95rem; }
-
-        /* TABLES */
-        .card-table {
-            background: var(--bg-card);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-
-        .table-header-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--accent-cyan);
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        table { width: 100%; border-collapse: collapse; text-align: left; }
         th {
-            background: rgba(15, 23, 42, 0.7);
-            color: var(--text-secondary);
-            padding: 0.9rem 1rem;
-            font-size: 0.85rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            border-bottom: 2px solid var(--border);
-        }
-        td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
-
-        td[contenteditable="true"]:focus {
-            outline: 2px solid var(--accent-cyan);
-            background: rgba(56, 189, 248, 0.1);
-            border-radius: 4px;
-        }
-
-        .tag-clinic { font-weight: 800; color: #FFFFFF; }
-        .tag-task {
-            background: rgba(245, 158, 11, 0.15);
+            background-color: #1e293b;
             color: var(--accent-amber);
-            border: 1px solid var(--accent-amber);
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 800;
-        }
-        .tag-person { font-weight: 700; color: var(--accent-cyan); }
-        .tag-time {
-            font-family: 'Courier New', Courier, monospace;
-            background: var(--bg-card-alt);
-            padding: 0.3rem 0.7rem;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            color: #FFFFFF;
+            font-weight: 700;
         }
 
-        /* GRID CARDS FOR CHAMPIONS & ROLES */
-        .grid-3 {
+        .highlight-day-cell {
+            background-color: rgba(245, 158, 11, 0.15);
+            font-weight: bold;
+        }
+
+        .grid-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
 
         .info-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            position: relative;
-            border-left: 6px solid var(--accent-cyan);
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
         }
 
-        .info-card h3 { font-size: 1.4rem; font-weight: 800; }
-        .info-card .sub-role { font-size: 0.95rem; font-weight: 700; color: var(--accent-purple); }
+        .info-card h3 {
+            margin-top: 0;
+            color: var(--accent-amber);
+        }
 
-        .custom-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+        .custom-list {
+            list-style: none;
+            padding: 0;
+        }
+
         .custom-list li {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .custom-list li::before { content: "•"; color: var(--accent-cyan); font-size: 1.5rem; line-height: 0; }
-
-        .highlight-day-cell {
-            background: rgba(56, 189, 248, 0.12) !important;
-            border-left: 3px solid var(--accent-cyan);
-            font-weight: 800;
-            color: #FFFFFF;
-        }
-
-        /* BUTTONS & MODALS */
-        .admin-only { display: none !important; }
-        body.is-admin .admin-only { display: inline-flex !important; }
-
-        .btn-action {
-            background: var(--accent-cyan);
-            color: #0B0F19;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-        .btn-action:hover { opacity: 0.9; }
-
-        .btn-export {
-            background: rgba(34, 197, 94, 0.2);
-            color: var(--accent-green);
-            border: 1px solid var(--accent-green);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-        .btn-export:hover { background: rgba(34, 197, 94, 0.3); }
-
-        .btn-login {
-            background: var(--bg-card-alt);
-            color: var(--accent-cyan);
-            border: 1px solid var(--accent-cyan);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .btn-danger {
-            background: rgba(251, 113, 133, 0.2);
-            color: var(--accent-rose);
-            border: 1px solid var(--accent-rose);
-            padding: 0.2rem 0.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 800;
+            padding: 5px 0;
+            border-bottom: 1px dashed var(--border-color);
         }
 
         .modal {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.85);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
+
         .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 2rem;
-            border-radius: 16px;
-            width: 420px;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .modal-content input, .modal-content textarea {
-            background: var(--bg-card-alt);
-            border: 1px solid var(--border);
-            color: #FFF;
-            padding: 0.7rem;
+            background-color: var(--card-bg);
+            padding: 20px;
             border-radius: 8px;
-            outline: none;
+            width: 400px;
+            max-width: 90%;
+            border: 1px solid var(--border-color);
         }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-dark);
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .tag-clinic { font-weight: bold; color: #60a5fa; }
+        .tag-task { background: rgba(59, 130, 246, 0.2); padding: 2px 6px; border-radius: 4px; }
+        .tag-person { color: #34d399; font-weight: bold; }
+        .tag-time { color: #fca5a5; }
     </style>
 </head>
 <body>
 
-    <!-- TOP HEADER -->
     <header>
-        <div class="header-title-container">
-            <h1 class="header-title">Clínicas de Llamadas Activas</h1>
-            <div class="live-indicator">
-                <div class="live-dot"></div>
-                TV Live Control
-            </div>
+        <div>
+            <h2>Panel de Control Operativo</h2>
+            <div id="realtimeClock" class="clock-container">00:00:00 AM</div>
         </div>
-        <div class="header-controls">
-            <label for="daySelect" style="font-weight: 700; color: var(--text-secondary);">DÍA:</label>
-            <select id="daySelect" class="day-select" onchange="switchDay(this.value)">
-                <option value="MON">LUNES</option>
-                <option value="TUE">MARTES</option>
-                <option value="WED">MIÉRCOLES</option>
-                <option value="THU">JUEVES</option>
-                <option value="FRI">VIERNES</option>
-                <option value="SUN">DOMINGO</option>
-            </select>
-            <div id="realtimeClock" class="clock-box">12:00:00 AM</div>
+        <div>
+            <button id="btnLogin" class="btn-login" onclick="openModal('modal-login')">Acceso Admin</button>
+            <div id="adminBadge" class="admin-badge">
+                <span style="color: var(--accent-amber); font-weight: bold;">MODO ADMINISTRADOR</span>
+                <button class="btn-login" style="background-color: #059669;" onclick="guardarEnNube()">☁️ Guardar Cambios</button>
+                <button class="btn-danger" onclick="logoutAdmin()">Salir</button>
+            </div>
+            <span id="mensajeEstado" style="margin-left: 10px; font-weight: bold;"></span>
         </div>
     </header>
 
-    <!-- NAVIGATION BAR & ADMIN STATUS -->
-    <nav class="nav-tabs">
-        <div class="tabs-group">
-            <button class="tab-btn active" onclick="activateTab('tab-daily', this)">📅 Programa del Día</button>
-            <button class="tab-btn" onclick="activateTab('tab-personal', this)">👥 Horario Semanal Personal</button>
-            <button class="tab-btn" onclick="activateTab('tab-champions', this)">👑 Group Champions</button>
-            <button class="tab-btn" onclick="activateTab('tab-responsabilidades', this)">📋 Responsabilidades y Roles</button>
-        </div>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="activateTab('tab-diario', this)">Asignaciones Diarias</button>
+        <button class="tab-btn" onclick="activateTab('tab-personal', this)">Horario del Personal</button>
+        <button class="tab-btn" onclick="activateTab('tab-champions', this)">Líderes / Champions</button>
+        <button class="tab-btn" onclick="activateTab('tab-roles', this)">Funciones y Roles</button>
+    </div>
 
-        <div id="adminStatusContainer" style="display: flex; gap: 0.5rem; align-items: center;">
-            <!-- BOTÓN GUARDAR EN LA NUBE INTEGRADO -->
-            <button class="btn-export admin-only" onclick="guardarEnNube()">💾 Guardar en la Nube</button>
-            <span id="mensajeEstado" style="font-size: 0.85rem; font-weight: bold; color: var(--accent-cyan);"></span>
-
-            <button id="btnLogin" class="btn-login" onclick="openModal('modal-login')">🔒 Iniciar Sesión (Admin)</button>
-            <div id="adminBadge" class="admin-badge logged-in" style="display: none;">
-                👤 Admin: <strong>chinese</strong>
-                <button class="btn-danger" style="margin-left: 0.5rem;" onclick="logoutAdmin()">Salir</button>
+    <!-- TAB 1: ASIGNACIONES DIARIAS -->
+    <div id="tab-diario" class="tab-content active">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>Turnos de Clínicas - Día: <span id="dayTitleDisplay" style="color: var(--accent-amber);">MON</span></h3>
+            <div>
+                <select id="daySelect" onchange="switchDay(this.value)" style="padding: 8px; border-radius: 6px; background: var(--card-bg); color: white; border: 1px solid var(--border-color);">
+                    <option value="MON">LUNES</option>
+                    <option value="TUE">MARTES</option>
+                    <option value="WED">MIÉRCOLES</option>
+                    <option value="THU">JUEVES</option>
+                    <option value="FRI">VIERNES</option>
+                    <option value="SUN">DOMINGO</option>
+                </select>
+                <button class="btn-login admin-only" onclick="openModal('modal-daily')">+ Agregar Asignación</button>
             </div>
         </div>
-    </nav>
 
-    <!-- MAIN VIEWPORTS -->
-    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>Clínica</th>
+                    <th>Tarea / Canal</th>
+                    <th>Asignado A</th>
+                    <th>Horario / Rango</th>
+                    <th class="admin-only">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="dailyTableBody">
+                <!-- JS populated -->
+            </tbody>
+        </table>
+    </div>
 
-        <!-- VIEW 1: DAILY PROGRAM -->
-        <section id="tab-daily" class="tab-content active">
-            <div class="alert-banner">
-                <h4 id="bannerTitle">📌 Mensajería Masiva Automática (SMS / WhatsApp)</h4>
-                <p id="bannerDesc">Campañas activas: Return to Care (Non-Utilizer) | Cervical Cancer Screening | Wellchild Visit</p>
-            </div>
+    <!-- TAB 2: HORARIO DEL PERSONAL -->
+    <div id="tab-personal" class="tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>Matriz Semanal de Empleados</h3>
+            <button class="btn-login admin-only" onclick="openModal('modal-staff')">+ Agregar Empleado</button>
+        </div>
 
-            <div class="card-table">
-                <div class="table-header-title">
-                    <span>Asignaciones de Trabajo - <span id="dayTitleDisplay" style="color: var(--accent-amber);">LUNES</span></span>
-                    <button class="btn-action admin-only" onclick="openModal('modal-daily')">+ Agregar Asignación</button>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 20%;">Clínica</th>
-                            <th style="width: 20%;">Área / Tarea</th>
-                            <th style="width: 25%;">Responsable</th>
-                            <th style="width: 25%;">Horario Programado</th>
-                            <th class="admin-only" style="width: 10%;">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dailyTableBody"></tbody>
-                </table>
-            </div>
-        </section>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descanso</th>
+                    <th>Lunes</th>
+                    <th>Martes</th>
+                    <th>Miércoles</th>
+                    <th>Jueves</th>
+                    <th>Viernes</th>
+                    <th>Domingo</th>
+                    <th class="admin-only">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="personalTableBody">
+                <!-- JS populated -->
+            </tbody>
+        </table>
+    </div>
 
-        <!-- VIEW 2: PERSONAL SCHEDULE -->
-        <section id="tab-personal" class="tab-content">
-            <div class="card-table">
-                <div class="table-header-title">
-                    <span>Horario Semanal de Turnos de Personal</span>
-                    <button class="btn-action admin-only" onclick="openModal('modal-staff')">+ Agregar Empleado</button>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Personal</th>
-                            <th style="color: var(--accent-amber);">RECESO</th>
-                            <th id="col-MON">LUNES</th>
-                            <th id="col-TUE">MARTES</th>
-                            <th id="col-WED">MIÉRCOLES</th>
-                            <th id="col-THU">JUEVES</th>
-                            <th id="col-FRI">VIERNES</th>
-                            <th id="col-SUN">DOMINGO</th>
-                            <th class="admin-only">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="personalTableBody"></tbody>
-                </table>
-            </div>
-        </section>
+    <!-- TAB 3: CHAMPIONS -->
+    <div id="tab-champions" class="tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>Grupos y Líderes Operativos</h3>
+            <button class="btn-login admin-only" onclick="openModal('modal-champion')">+ Agregar Líder</button>
+        </div>
+        <div id="championsGrid" class="grid-container">
+            <!-- JS populated -->
+        </div>
+    </div>
 
-        <!-- VIEW 3: CHAMPIONS -->
-        <section id="tab-champions" class="tab-content">
-            <div style="margin-bottom: 1rem; display: flex; justify-content: flex-end;">
-                <button class="btn-action admin-only" onclick="openModal('modal-champion')">+ Agregar Champion</button>
-            </div>
-            <div class="grid-3" id="championsGrid"></div>
-        </section>
+    <!-- TAB 4: ROLES -->
+    <div id="tab-roles" class="tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>Descripción de Funciones Específicas</h3>
+            <button class="btn-login admin-only" onclick="openModal('modal-role')">+ Agregar Rol</button>
+        </div>
+        <div id="rolesGrid" class="grid-container">
+            <!-- JS populated -->
+        </div>
+    </div>
 
-        <!-- VIEW 4: ROLES AND RESPONSIBILITIES -->
-        <section id="tab-responsabilidades" class="tab-content">
-            <div style="margin-bottom: 1rem; display: flex; justify-content: flex-end;">
-                <button class="btn-action admin-only" onclick="openModal('modal-role')">+ Agregar Nuevo Rol / Miembro</button>
-            </div>
-            <div class="grid-3" id="rolesGrid"></div>
-        </section>
-
-    </main>
-
-    <!-- MODALES -->
+    <!-- MODAL LOGIN -->
     <div id="modal-login" class="modal">
         <div class="modal-content">
-            <h3 style="color: var(--accent-cyan);">Acceso Administrador</h3>
-            <input type="text" id="loginUser" placeholder="Usuario">
-            <input type="password" id="loginPass" placeholder="Contraseña">
-            <p id="loginError" style="color: var(--accent-rose); font-size: 0.85rem; display: none;">Usuario o contraseña incorrectos.</p>
-            <button class="btn-action" onclick="loginAdmin()">Ingresar</button>
-            <button class="btn-danger" onclick="closeModal('modal-login')">Cancelar</button>
+            <h3>Iniciar Sesión Administrador</h3>
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" id="loginUser">
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="loginPass">
+            </div>
+            <p id="loginError" style="color: var(--danger-color); display:none;">Credenciales incorrectas</p>
+            <div style="display:flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-danger" onclick="closeModal('modal-login')">Cancelar</button>
+                <button class="btn-login" onclick="loginAdmin()">Entrar</button>
+            </div>
         </div>
     </div>
 
-    <div id="modal-staff" class="modal">
-        <div class="modal-content">
-            <h3 style="color: var(--accent-cyan);">Agregar Nuevo Empleado</h3>
-            <input type="text" id="newStaffName" placeholder="Nombre del Empleado">
-            <input type="text" id="newStaffBreak" placeholder="Horario de Receso (Ej: 1:00 PM - 2:00 PM)">
-            <button class="btn-action" onclick="addStaff()">Guardar Empleado</button>
-            <button class="btn-danger" onclick="closeModal('modal-staff')">Cancelar</button>
-        </div>
-    </div>
-
+    <!-- MODAL NUEVA ASIGNACION DIARIA -->
     <div id="modal-daily" class="modal">
         <div class="modal-content">
-            <h3 style="color: var(--accent-cyan);">Agregar Asignación Diaria</h3>
-            <input type="text" id="newClinic" placeholder="Clínica">
-            <input type="text" id="newTask" placeholder="Área / Tarea (Ej: CALL, HEDIS)">
-            <input type="text" id="newName" placeholder="Responsable">
-            <input type="text" id="newTime" placeholder="Horario (Ej: 11:00 am - 1:00 pm)">
-            <button class="btn-action" onclick="addDailyAssignment()">Guardar Asignación</button>
-            <button class="btn-danger" onclick="closeModal('modal-daily')">Cancelar</button>
+            <h3>Nueva Asignación Diaria</h3>
+            <div class="form-group"><label>Clínica</label><input type="text" id="newClinic"></div>
+            <div class="form-group"><label>Tarea</label><input type="text" id="newTask" placeholder="CALL, SMS, etc."></div>
+            <div class="form-group"><label>Persona</label><input type="text" id="newName"></div>
+            <div class="form-group"><label>Horario</label><input type="text" id="newTime" placeholder="11:00 am - 2:00 pm"></div>
+            <div style="display:flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-danger" onclick="closeModal('modal-daily')">Cancelar</button>
+                <button class="btn-login" onclick="addDailyAssignment()">Guardar</button>
+            </div>
         </div>
     </div>
 
+    <!-- MODAL NUEVO EMPLEADO -->
+    <div id="modal-staff" class="modal">
+        <div class="modal-content">
+            <h3>Agregar Empleado</h3>
+            <div class="form-group"><label>Nombre</label><input type="text" id="newStaffName"></div>
+            <div class="form-group"><label>Hora Descanso</label><input type="text" id="newStaffBreak" placeholder="1:00 PM - 2:00 PM"></div>
+            <div style="display:flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-danger" onclick="closeModal('modal-staff')">Cancelar</button>
+                <button class="btn-login" onclick="addStaff()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVO LIDER -->
     <div id="modal-champion" class="modal">
         <div class="modal-content">
-            <h3 style="color: var(--accent-cyan);">Agregar Group Champion</h3>
-            <input type="text" id="newChampName" placeholder="Nombre (Ej: Oraymi)">
-            <input type="text" id="newChampRole" placeholder="Sub-Rol (Ej: Group Leader Cronos)">
-            <input type="text" id="newChampDesc" placeholder="Horario/Descripción corta">
-            <textarea id="newChampClinics" rows="4" placeholder="Clínicas Asignadas (Una por línea)"></textarea>
-            <button class="btn-action" onclick="addChampionCard()">Guardar Champion</button>
-            <button class="btn-danger" onclick="closeModal('modal-champion')">Cancelar</button>
+            <h3>Agregar Grupo / Líder</h3>
+            <div class="form-group"><label>Nombre del Líder</label><input type="text" id="newChampName"></div>
+            <div class="form-group"><label>Rol / Grupo</label><input type="text" id="newChampRole"></div>
+            <div class="form-group"><label>Descripción / Horario</label><input type="text" id="newChampDesc"></div>
+            <div class="form-group"><label>Clínicas (Una por línea)</label><textarea id="newChampClinics" rows="4"></textarea></div>
+            <div style="display:flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-danger" onclick="closeModal('modal-champion')">Cancelar</button>
+                <button class="btn-login" onclick="addChampionCard()">Guardar</button>
+            </div>
         </div>
     </div>
 
+    <!-- MODAL NUEVO ROL -->
     <div id="modal-role" class="modal">
         <div class="modal-content">
-            <h3 style="color: var(--accent-cyan);">Agregar Miembro / Rol</h3>
-            <input type="text" id="newRoleTitle" placeholder="Nombre (Ej: Geidi / Supervisor)">
-            <textarea id="newRoleTasks" rows="5" placeholder="Tareas (Una por línea)"></textarea>
-            <button class="btn-action" onclick="addRoleCard()">Guardar Rol</button>
-            <button class="btn-danger" onclick="closeModal('modal-role')">Cancelar</button>
+            <h3>Agregar Tarjeta de Rol</h3>
+            <div class="form-group"><label>Título / Nombre</label><input type="text" id="newRoleTitle"></div>
+            <div class="form-group"><label>Tareas / Tareas (Una por línea)</label><textarea id="newRoleTasks" rows="4"></textarea></div>
+            <div style="display:flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-danger" onclick="closeModal('modal-role')">Cancelar</button>
+                <button class="btn-login" onclick="addRoleCard()">Guardar</button>
+            </div>
         </div>
     </div>
 
@@ -625,7 +471,7 @@
         ];
 
         let defaultRoles = [
-            { title: 'Geidi', tasks: ['Llamadas y mensajes: SMS, WhatsApp, Email.', 'Revisión de medidas exitosas.', 'Reporte de avances.'] },
+            { title: 'Geidi', tasks: ['Llamadas y mensajes: SMS, WhatsApp, Email.', 'Revisión de medidas exitosas.', 'Reporte de advances.'] },
             { title: 'Jary', tasks: ['Recertificaciones.', 'Wellcare Track Agendas.', 'Apoyo a Email de Seguros.'] }
         ];
 
@@ -765,23 +611,23 @@
                 const card = document.createElement('div');
                 card.className = 'info-card';
                 card.innerHTML = `
-                    <div style="display:flex; justify-space-between; align-items:center;">
-                        <h3 style="color: var(--accent-cyan);" contenteditable="${isAdmin}" onblur="updateChampData(${idx}, 'name', this.innerText)">${champ.name}</h3>
-                        <button class="btn-danger admin-only" onclick="deleteChamp(${idx})">🗑️</button>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <h3 contenteditable="${isAdmin}" onblur="editChampionData(${idx}, 'name', this.innerText)">${champ.name}</h3>
+                        <button class="btn-danger admin-only" onclick="deleteChampion(${idx})">🗑️</button>
                     </div>
-                    <div class="sub-role" contenteditable="${isAdmin}" onblur="updateChampData(${idx}, 'role', this.innerText)">${champ.role}</div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);" contenteditable="${isAdmin}" onblur="updateChampData(${idx}, 'desc', this.innerText)">${champ.desc}</p>
+                    <div class="sub-role" contenteditable="${isAdmin}" onblur="editChampionData(${idx}, 'role', this.innerText)">${champ.role}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);" contenteditable="${isAdmin}" onblur="editChampionData(${idx}, 'desc', this.innerText)">${champ.desc}</div>
                     <ul class="custom-list">
-                        ${champ.clinics.map((c, cIdx) => `<li contenteditable="${isAdmin}" onblur="updateChampClinic(${idx}, ${cIdx}, this.innerText)">${c}</li>`).join('')}
+                        ${champ.clinics.map((c, cIdx) => `<li contenteditable="${isAdmin}" onblur="editChampionClinic(${idx}, ${cIdx}, this.innerText)">${c}</li>`).join('')}
                     </ul>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function updateChampData(idx, key, val) { if (isAdmin) { championsData[idx][key] = val.trim(); saveAllData(); } }
-        function updateChampClinic(idx, cIdx, val) { if (isAdmin) { championsData[idx].clinics[cIdx] = val.trim(); saveAllData(); } }
-        function deleteChamp(idx) { if (isAdmin) { championsData.splice(idx, 1); saveAllData(); renderChampions(); } }
+        function editChampionData(idx, key, val) { if (isAdmin) { championsData[idx][key] = val.trim(); saveAllData(); } }
+        function editChampionClinic(cIdx, itemIdx, val) { if (isAdmin) { championsData[cIdx].clinics[itemIdx] = val.replace(/^•\s*/, '').trim(); saveAllData(); } }
+        function deleteChampion(idx) { if (isAdmin) { championsData.splice(idx, 1); saveAllData(); renderChampions(); } }
 
         function addChampionCard() {
             if (!isAdmin) return;
@@ -791,10 +637,12 @@
             const clinicsRaw = document.getElementById('newChampClinics').value;
 
             if (!name) return;
-            const clinics = clinicsRaw.split('\n').filter(c => c.trim() !== '');
+            const clinics = clinicsRaw.split('\n').map(c => c.trim()).filter(c => c.length > 0);
 
-            championsData.push({ name, role, desc, clinics });
+            championsData.push({ name: name.startsWith('👑') ? name : '👑 ' + name, role, desc, clinics });
             saveAllData(); renderChampions(); closeModal('modal-champion');
+            document.getElementById('newChampName').value = ''; document.getElementById('newChampRole').value = '';
+            document.getElementById('newChampDesc').value = ''; document.getElementById('newChampClinics').value = '';
         }
 
         function renderRoles() {
@@ -805,20 +653,20 @@
                 const card = document.createElement('div');
                 card.className = 'info-card';
                 card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="color: var(--accent-purple);" contenteditable="${isAdmin}" onblur="updateRoleData(${idx}, 'title', this.innerText)">${role.title}</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <h3 contenteditable="${isAdmin}" onblur="editRoleData(${idx}, 'title', this.innerText)">${role.title}</h3>
                         <button class="btn-danger admin-only" onclick="deleteRole(${idx})">🗑️</button>
                     </div>
                     <ul class="custom-list">
-                        ${role.tasks.map((t, tIdx) => `<li contenteditable="${isAdmin}" onblur="updateRoleTask(${idx}, ${tIdx}, this.innerText)">${t}</li>`).join('')}
+                        ${role.tasks.map((t, tIdx) => `<li contenteditable="${isAdmin}" onblur="editRoleTask(${idx}, ${tIdx}, this.innerText)">${t}</li>`).join('')}
                     </ul>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function updateRoleData(idx, key, val) { if (isAdmin) { rolesData[idx][key] = val.trim(); saveAllData(); } }
-        function updateRoleTask(idx, tIdx, val) { if (isAdmin) { rolesData[idx].tasks[tIdx] = val.trim(); saveAllData(); } }
+        function editRoleData(idx, key, val) { if (isAdmin) { rolesData[idx][key] = val.trim(); saveAllData(); } }
+        function editRoleTask(rIdx, tIdx, val) { if (isAdmin) { rolesData[rIdx].tasks[tIdx] = val.replace(/^•\s*/, '').trim(); saveAllData(); } }
         function deleteRole(idx) { if (isAdmin) { rolesData.splice(idx, 1); saveAllData(); renderRoles(); } }
 
         function addRoleCard() {
@@ -827,77 +675,70 @@
             const tasksRaw = document.getElementById('newRoleTasks').value;
 
             if (!title) return;
-            const tasks = tasksRaw.split('\n').filter(t => t.trim() !== '');
+            const tasks = tasksRaw.split('\n').map(t => t.trim()).filter(t => t.length > 0);
 
             rolesData.push({ title, tasks });
             saveAllData(); renderRoles(); closeModal('modal-role');
+            document.getElementById('newRoleTitle').value = ''; document.getElementById('newRoleTasks').value = '';
         }
 
         function renderAll() {
+            document.getElementById('daySelect').value = activeDay;
             renderDailySchedule();
             renderPersonalTable();
             renderChampions();
             renderRoles();
         }
 
-        // ==========================================
-        // 🚀 FUNCIONES DE SINCRONIZACIÓN EN NUBE
-        // ==========================================
+        // GUARDAR EN GOOGLE SHEETS VIA APPS SCRIPT
         async function guardarEnNube() {
-            const estado = document.getElementById('mensajeEstado');
-            estado.style.color = 'var(--accent-amber)';
-            estado.innerText = 'Guardando en Sheets...';
+            if (!isAdmin) return;
+            const statusLabel = document.getElementById('mensajeEstado');
+            statusLabel.textContent = '⏳ Guardando...';
 
             const payload = {
-                staffRoster,
-                clinicSchedule,
-                championsData,
-                rolesData
+                staffRoster: staffRoster,
+                clinicSchedule: clinicSchedule,
+                championsData: championsData,
+                rolesData: rolesData
             };
 
             try {
-                await fetch(URL_GOOGLE_SCRIPT, {
+                const response = await fetch(URL_GOOGLE_SCRIPT, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contenido: JSON.stringify(payload) })
+                    body: JSON.stringify(payload)
                 });
-
-                estado.style.color = 'var(--accent-green)';
-                estado.innerText = '¡Guardado con éxito!';
-                setTimeout(() => { estado.innerText = ''; }, 3000);
-            } catch (error) {
-                console.error('Error al guardar:', error);
-                estado.style.color = 'var(--accent-rose)';
-                estado.innerText = '❌ Error al guardar';
+                statusLabel.textContent = '✅ Guardado con éxito';
+                setTimeout(() => { statusLabel.textContent = ''; }, 3000);
+            } catch (err) {
+                console.error(err);
+                statusLabel.textContent = '❌ Error al guardar';
             }
         }
 
-        async function cargarDeNube() {
-            const estado = document.getElementById('mensajeEstado');
+        // CARGA INICIAL DESDE LA NUBE SI EXISTE APPS SCRIPT
+        async function cargarDesdeNube() {
             try {
                 const res = await fetch(URL_GOOGLE_SCRIPT);
-                const data = await res.json();
-
-                if (data.contenido) {
-                    const parsed = JSON.parse(data.contenido);
-                    if (parsed.staffRoster) staffRoster = parsed.staffRoster;
-                    if (parsed.clinicSchedule) clinicSchedule = parsed.clinicSchedule;
-                    if (parsed.championsData) championsData = parsed.championsData;
-                    if (parsed.rolesData) rolesData = parsed.rolesData;
-
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.staffRoster) staffRoster = data.staffRoster;
+                    if (data.clinicSchedule) clinicSchedule = data.clinicSchedule;
+                    if (data.championsData) championsData = data.championsData;
+                    if (data.rolesData) rolesData = data.rolesData;
                     saveAllData();
-                    renderAll();
                 }
             } catch (e) {
-                console.log("Cargando desde base local por defecto.");
+                console.log("Cargando desde almacenamiento local o valores por defecto.");
             }
+            applyAdminState();
         }
 
-        // INICIALIZACIÓN
-        document.getElementById('daySelect').value = activeDay;
-        applyAdminState();
-        cargarDeNube(); // Carga automática de Google Sheets al abrir la web
+        window.onload = () => {
+            cargarDesdeNube();
+        };
     </script>
 </body>
 </html>
