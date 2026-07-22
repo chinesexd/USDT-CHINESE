@@ -1,89 +1,702 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora USD a DOP</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Control de Proyecto - TV Mode</title>
+    <style>
+        :root {
+            --bg-main: #0B0F19;
+            --bg-card: #151C2C;
+            --bg-card-alt: #1E293B;
+            --accent-cyan: #38BDF8;
+            --accent-green: #22C55E;
+            --accent-purple: #C084FC;
+            --accent-amber: #F59E0B;
+            --accent-rose: #FB7185;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --border: #334155;
+            --glow: rgba(56, 189, 248, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 1.25rem;
+            gap: 1.25rem;
+        }
+
+        /* TV HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #151C2C 0%, #0F172A 100%);
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .header-title-container {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .header-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #38BDF8, #818CF8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .live-indicator {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .live-dot {
+            width: 9px;
+            height: 9px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.3); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .day-select {
+            background: var(--bg-card-alt);
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+            padding: 0.5rem 1.2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--glow);
+        }
+
+        .clock-box {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #FFFFFF;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 0.3rem 1.2rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            letter-spacing: 2px;
+        }
+
+        /* NAVIGATION TABS */
+        .nav-tabs {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .tab-btn {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.8rem 1.6rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--accent-cyan);
+            color: #0B0F19;
+            border-color: var(--accent-cyan);
+            font-weight: 900;
+            box-shadow: 0 0 15px var(--glow);
+        }
+
+        /* MAIN CONTENT VIEWPORTS */
+        main {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tab-content {
+            display: none;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            padding-right: 0.4rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .tab-content::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        /* BANNER ALERTS */
+        .alert-banner {
+            background: rgba(192, 132, 252, 0.1);
+            border-left: 5px solid var(--accent-purple);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-banner h4 {
+            color: var(--accent-purple);
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 0.2rem;
+        }
+
+        .alert-banner p {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        /* TABLE DESIGN */
+        .card-table {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .table-header-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.7);
+            color: var(--text-secondary);
+            padding: 0.9rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 1.05rem;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .tag-clinic {
+            font-weight: 800;
+            color: #FFFFFF;
+        }
+
+        .tag-task {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-amber);
+            border: 1px solid var(--accent-amber);
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+
+        .tag-person {
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .tag-time {
+            font-family: 'Courier New', Courier, monospace;
+            background: var(--bg-card-alt);
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            color: #FFFFFF;
+            font-weight: 700;
+        }
+
+        /* GRID CARDS FOR CHAMPIONS & RESPONSIBILITIES */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .info-card.champion-oraymi { border-left: 6px solid var(--accent-cyan); }
+        .info-card.champion-maria { border-left: 6px solid var(--accent-green); }
+        .info-card.champion-alberto { border-left: 6px solid var(--accent-amber); }
+
+        .info-card h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .info-card .sub-role {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .custom-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .custom-list li {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .custom-list li::before {
+            content: "•";
+            color: var(--accent-cyan);
+            font-size: 1.5rem;
+            line-height: 0;
+        }
+
+        .highlight-day-cell {
+            background: rgba(56, 189, 248, 0.12) !important;
+            border-left: 3px solid var(--accent-cyan);
+            font-weight: 800;
+            color: #FFFFFF;
+        }
+    </style>
 </head>
 <body>
-  <main class="app">
-    <section class="panel">
-      <div class="hero">
-        <p class="eyebrow">Calculadora personalizada</p>
-        <h1>Calculadora USD a DOP (Neto) - Chinese</h1>
-        <p class="description">
-          Calcula el equivalente bruto en pesos, el impuesto DGII, la comision fija y el monto neto a recibir.
-        </p>
-      </div>
 
-      <form id="converter-form" class="form">
-        <label class="field">
-          <span>Monto en Dolares (USD)</span>
-          <input id="amountUsd" type="number" min="0" step="0.01" placeholder="Ejemplo: 100" required>
-        </label>
+    <!-- CONTROL BAR TOP -->
+    <header>
+        <div class="header-title-container">
+            <h1 class="header-title">Clínicas de Llamadas Activas</h1>
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                TV Live Control
+            </div>
+        </div>
+        <div class="header-controls">
+            <label for="daySelect" style="font-weight: 700; color: var(--text-secondary);">DÍA MOSTRADO:</label>
+            <select id="daySelect" class="day-select" onchange="switchDay(this.value)">
+                <option value="MON">LUNES</option>
+                <option value="TUE">MARTES</option>
+                <option value="WED">MIÉRCOLES</option>
+                <option value="THU">JUEVES</option>
+                <option value="FRI">VIERNES</option>
+                <option value="SUN">DOMINGO</option>
+            </select>
+            <div id="realtimeClock" class="clock-box">00:00:00</div>
+        </div>
+    </header>
 
-        <label class="field">
-          <span>Tasa de Cambio (Ej: 60.00)</span>
-          <input id="exchangeRate" type="number" min="0" step="0.0001" placeholder="Ejemplo: 60" required>
-        </label>
+    <!-- TAB NAVIGATION BAR -->
+    <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="activateTab('tab-daily', this)">📅 Programa del Día (<span id="currentDayBadge">HOY</span>)</button>
+        <button class="tab-btn" onclick="activateTab('tab-personal', this)">👥 Horario Semanal Personal</button>
+        <button class="tab-btn" onclick="activateTab('tab-champions', this)">👑 Group Champions</button>
+        <button class="tab-btn" onclick="activateTab('tab-responsabilidades', this)">📋 Responsabilidades y Roles</button>
+    </nav>
 
-        <label class="field">
-          <span>Cargo Fijo / Comision (DOP)</span>
-          <input id="fixedCharge" type="number" min="0" step="0.01" placeholder="Ejemplo: 100" required>
-        </label>
+    <!-- CONTENT VIEWS -->
+    <main>
 
-        <label class="field">
-          <span>Impuesto DGII (%)</span>
-          <input id="taxRate" type="number" min="0" step="0.0001" placeholder="Ejemplo: 0.15" required>
-        </label>
+        <!-- VIEW 1: DAILY CLINIC SCHEDULE -->
+        <section id="tab-daily" class="tab-content active">
+            <div class="alert-banner">
+                <div>
+                    <h4>📌 Mensajería Masiva Automática (SMS / WhatsApp)</h4>
+                    <p>Campañas activas: Return to Care (Non-Utilizer) | Cervical Cancer Screening | Wellchild Visit</p>
+                </div>
+            </div>
 
-        <label class="field field--full">
-          <span>Numero de WhatsApp (opcional)</span>
-          <input id="phoneNumber" type="text" inputmode="tel" placeholder="Ejemplo: 59177777777">
-        </label>
+            <div class="card-table">
+                <div class="table-header-title">
+                    <span>Asignaciones de Llamadas - <span id="dayTitleDisplay" style="color: var(--accent-amber);">LUNES</span></span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Clínica</th>
+                            <th style="width: 20%;">Área / Tarea</th>
+                            <th style="width: 30%;">Responsable</th>
+                            <th style="width: 25%;">Horario Programado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dailyTableBody">
+                        <!-- Filled by Javascript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-        <button class="button" type="submit">Convertir y Calcular</button>
-        <button class="button button--secondary" id="whatsappButton" type="button">
-          Enviar a WhatsApp
-        </button>
-      </form>
+        <!-- VIEW 2: FULL PERSONAL SCHEDULE -->
+        <section id="tab-personal" class="tab-content">
+            <div class="card-table">
+                <div class="table-header-title">Horario Semanal de Turnos de Personal</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Personal</th>
+                            <th id="col-MON">LUNES</th>
+                            <th id="col-TUE">MARTES</th>
+                            <th id="col-WED">MIÉRCOLES</th>
+                            <th id="col-THU">JUEVES</th>
+                            <th id="col-FRI">VIERNES</th>
+                            <th id="col-SUN">DOMINGO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="personalTableBody">
+                        <!-- Filled by Javascript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-      <p class="status" id="statusMessage" aria-live="polite"></p>
+        <!-- VIEW 3: GROUP CHAMPIONS -->
+        <section id="tab-champions" class="tab-content">
+            <div class="grid-3">
+                <div class="info-card champion-oraymi">
+                    <h3 style="color: var(--accent-cyan);">👑 Oraymi</h3>
+                    <div class="sub-role" style="color: var(--accent-cyan);">Group Champion – Group Leader Cronos</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Lunes a Jueves (6 PM – 9 PM): Recertificación Todos los Seguros, HealthFirst EP 90 Días, HEDIS Rosters.</p>
+                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
+                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
+                    <ul class="custom-list">
+                        <li>Junction</li>
+                        <li>Florimon</li>
+                        <li>NYPC</li>
+                        <li>UMO</li>
+                        <li>Stephen Perez</li>
+                        <li>Fort Washington (One Stop, First Step, Millennium)</li>
+                    </ul>
+                </div>
 
-      <section class="results" aria-live="polite">
-        <article class="card">
-          <p class="card__label">Equivalente en Pesos (Bruto)</p>
-          <p class="card__value" id="grossAmount">RD$ 0.00</p>
-        </article>
+                <div class="info-card champion-maria">
+                    <h3 style="color: var(--accent-green);">👑 Maria</h3>
+                    <div class="sub-role" style="color: var(--accent-green);">Group Champion – Group Leader Horizonte</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Líder de Estrategia y Control Operativo Horizonte.</p>
+                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
+                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
+                    <ul class="custom-list">
+                        <li>BCE</li>
+                        <li>GODWIN</li>
+                        <li>JOSE APONTE</li>
+                        <li>TOMMY</li>
+                        <li>AMERICA</li>
+                        <li>COLUMBUS (Guillen)</li>
+                    </ul>
+                </div>
 
-        <article class="card card--danger">
-          <p class="card__label" id="taxLabel">Impuesto DGII (0.15%)</p>
-          <p class="card__value" id="taxAmount">- RD$ 0.00</p>
-        </article>
+                <div class="info-card champion-alberto">
+                    <h3 style="color: var(--accent-amber);">👑 Alberto</h3>
+                    <div class="sub-role" style="color: var(--accent-amber);">Group Champion – Group Leader Europa</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Supervisión General de Procesos e Integración.</p>
+                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
+                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
+                    <ul class="custom-list">
+                        <li>JAG</li>
+                        <li>PATEL</li>
+                        <li>JEROME</li>
+                        <li>GENERAL</li>
+                        <li>JANNY OZUNA</li>
+                        <li>WILLIAMS BURG</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
-        <article class="card card--danger">
-          <p class="card__label">Comision Bancaria</p>
-          <p class="card__value" id="chargeAmount">- RD$ 0.00</p>
-        </article>
+        <!-- VIEW 4: ROLES AND TASKS -->
+        <section id="tab-responsabilidades" class="tab-content">
+            <div class="grid-3">
+                <div class="info-card">
+                    <h3 style="color: var(--accent-cyan);">Geidi</h3>
+                    <ul class="custom-list">
+                        <li>Llamadas y mensajes: SMS, WhatsApp, Email.</li>
+                        <li>Revisión de medidas exitosas en semana de ciencias asignadas.</li>
+                        <li>Reporte de avances: Citas agendadas, asistencias y medidas cerradas.</li>
+                    </ul>
+                </div>
 
-        <article class="card card--accent card--full">
-          <p class="card__label">MONTO NETO A RECIBIR (DOP)</p>
-          <p class="card__value card__value--large" id="netAmount">RD$ 0.00</p>
-        </article>
-      </section>
+                <div class="info-card">
+                    <h3 style="color: var(--accent-cyan);">Liz</h3>
+                    <ul class="custom-list">
+                        <li>Llamadas y mensajes: SMS, WhatsApp, Email.</li>
+                        <li>Revisión de medidas exitosas en semana de ciencias asignadas.</li>
+                        <li>Reporte de avances: Citas agendadas, asistencias y medidas cerradas.</li>
+                    </ul>
+                </div>
 
-      <section class="summary">
-        <h2>Formula usada</h2>
-        <p id="summaryText">
-          Neto en DOP = (USD x tasa) - impuesto DGII editable - cargo fijo.
-        </p>
-      </section>
+                <div class="info-card">
+                    <h3 style="color: var(--accent-purple);">Jary</h3>
+                    <ul class="custom-list">
+                        <li>Recertificaciones.</li>
+                        <li>Wellcare Track Agendas.</li>
+                        <li>Apoyo a Email de Seguros.</li>
+                        <li>Llamadas en Inglés.</li>
+                        <li>Apoyo EBO.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
-      <p class="note">Asegura los pisos de la operacion antes de procesar.</p>
-    </section>
-  </main>
+    </main>
 
-  <script src="script.js"></script>
+    <script>
+        // DATA STRUCTURE FOR PERSONAL SCHEDULE
+        const staffRoster = [
+            { name: 'GEIDI', MON: '2 – 9pm', TUE: '10 – 5pm', WED: '10 – 1 / 2 – 9pm', THU: '10am – 9pm', FRI: '10 – 7pm', SUN: '11 – 4pm' },
+            { name: 'ORAYMI', MON: '11am – 9pm', TUE: '11am – 9pm', WED: '9:00am – 6:00pm', THU: '11am – 9pm', FRI: '9am – 5pm', SUN: 'Risk?' },
+            { name: 'JARY', MON: '9 AM – 3 PM', TUE: '9 AM – 4 PM', WED: '9 AM – 7 PM', THU: '9 AM – 4:30 PM', FRI: '9 AM – 7 PM', SUN: '-' },
+            { name: 'ANDRY', MON: '3:00 – 8:00pm', TUE: '3:00 – 8:00pm', WED: '3:00 – 8:00pm', THU: '3:00 – 8:00pm', FRI: '-', SUN: '1pm – 6pm' },
+            { name: 'WALESKA', MON: '10am – 6pm', TUE: '10am – 6pm', WED: '10am – 6pm', THU: '10am – 6pm', FRI: '9am – 5pm', SUN: '-' },
+            { name: 'SMAILYN', MON: '11:00 – 7:00pm', TUE: '1:00 – 9:00pm', WED: '1:00 – 9:00pm', THU: '1:00 – 9:00pm', FRI: '11am – 4pm', SUN: '10:00 – 1:00pm' },
+            { name: 'DAHIANA', MON: '11am – 7pm', TUE: '11am – 7pm', WED: '12pm – 8pm', THU: '11am – 7pm', FRI: '9am – 5pm', SUN: '-' },
+            { name: 'LINDSY', MON: '-', TUE: '1pm – 9pm', WED: '11am – 7pm', THU: '1pm – 9pm', FRI: '11am – 7pm', SUN: '10am – 6pm' }
+        ];
+
+        // DATA STRUCTURE FOR CLINIC CALLS SCHEDULE
+        const clinicSchedule = {
+            MON: [
+                { clinic: 'GALANIS', task: 'CALL', name: 'Oraymi', time: '11:00 am - 1:00 pm' },
+                { clinic: 'APONTE', task: 'CALL', name: 'Daihana', time: '11:00 am - 2:00 pm' },
+                { clinic: 'FIRST STEP', task: 'CALL', name: 'Smailyn', time: '3:00 pm - 7:00 pm' },
+                { clinic: 'UMO', task: 'HEDIS', name: 'Geidi', time: '2:00 pm - 5:00 pm' },
+                { clinic: 'GENERIC', task: 'SDH / RISK', name: 'Daihana / Jary', time: '3:00 pm - 7:00 pm' },
+                { clinic: 'PATEL', task: 'CALL', name: 'Smailyn', time: '11:00 am - 1:00 pm' },
+                { clinic: 'STEPHEN', task: 'HEDIS', name: 'Geidi', time: '5:00 pm - 8:00 pm' },
+                { clinic: 'WILLIAM', task: 'CALL', name: 'Daihana', time: '2:00 pm - 5:00 pm' },
+                { clinic: 'JEROME', task: 'MISSED', name: 'Oraymi', time: '6:00 pm - 7:00 pm' },
+                { clinic: 'GMS', task: 'HEDIS', name: 'Geidi', time: '8:00 pm - 9:00 pm' }
+            ],
+            TUE: [
+                { clinic: 'GALANIS', task: 'CALL', name: 'Oraymi', time: '11:00 am - 1:00 pm' },
+                { clinic: 'APONTE', task: 'CALL', name: 'Waleska', time: '10:00 am - 12:00 pm' },
+                { clinic: 'FIRST STEP', task: 'CALL', name: 'Jaris', time: '3:00 pm - 5:00 pm' },
+                { clinic: 'UMO', task: 'HEDIS', name: 'Geidi (3hrs)', time: '10:00 am - 2:00 pm' },
+                { clinic: 'GENERIC', task: 'PCMH / RISK', name: 'Waleska / Jary / Oraymi', time: '3:00 pm - 9:00 pm' },
+                { clinic: 'PATEL', task: 'CALL', name: 'Daihana', time: '1:00 pm - 4:00 pm' },
+                { clinic: 'STEPHEN', task: 'HEDIS', name: 'Geidi (3hrs)', time: '3:00 pm - 5:00 pm' },
+                { clinic: 'WILLIAM', task: 'CALL', name: 'Lindsy', time: '6:00 pm - 9:00 pm' },
+                { clinic: 'GMS', task: 'CALL', name: 'Daihana', time: '11:00 pm - 1:00 pm' },
+                { clinic: 'FW', task: 'CALL', name: 'Lindsy', time: '1:00 pm - 3:00 pm' }
+            ],
+            WED: [
+                { clinic: 'GALANIS', task: 'CALL / REF', name: 'Smarlyn / Lindsy', time: '5:00 pm - 9:00 pm' },
+                { clinic: 'APONTE', task: 'CALL / REF', name: 'Smarlyn', time: '1:00 pm - 5:00 pm' },
+                { clinic: 'FIRST STEP', task: 'CALL', name: 'Waleska', time: '10:00 am - 12:00 pm' },
+                { clinic: 'UMO', task: 'CALL', name: 'Oraymi', time: '1:00 pm - 2:00 pm' },
+                { clinic: 'GENERIC', task: 'TRAN / RX / SDH', name: 'Jaris / Lindsy / Daihana', time: '3:00 pm - 9:00 pm' },
+                { clinic: 'PATEL', task: 'CALL', name: 'Jaris', time: '3:00 pm - 5:00 pm' },
+                { clinic: 'STEPHEN', task: 'HEDIS', name: 'Geidi', time: '3:00 pm - 5:00 pm' },
+                { clinic: 'WILLIAM', task: 'HEDIS / SMS', name: 'Geidi / Smarlyn', time: '10:00 am - 7:00 pm' },
+                { clinic: 'JEROME', task: 'MISSED', name: 'Waleska', time: '5:00 pm - 6:00 pm' },
+                { clinic: 'GMS', task: 'CALL / SMS', name: 'Daihana / Lindsy', time: '3:00 pm - 8:00 pm' }
+            ],
+            THU: [
+                { clinic: 'GALANIS', task: 'CALL', name: 'Smarlyn', time: '5:00 pm - 9:00 pm' },
+                { clinic: 'APONTE', task: 'CALL / REF', name: 'Jaris / Jary', time: '3:00 pm - 9:00 pm' },
+                { clinic: 'FIRST STEP', task: 'CALL', name: 'Lindsy', time: '3:00 pm - 5:00 pm' },
+                { clinic: 'Comprehensive', task: 'SMS', name: 'Daihana', time: '5:00 pm - 7:00 pm' },
+                { clinic: 'UMO', task: 'HEDIS', name: 'Geidi', time: '10:00 am - 12:00 pm' },
+                { clinic: 'PATEL', task: 'CALL', name: 'Geidi', time: '12:00 pm - 4:00 pm' },
+                { clinic: 'WILLIAM', task: 'CALL', name: 'Jaris / Daihana', time: '11:00 am - 7:00 pm' },
+                { clinic: 'JEROME', task: 'MISSED', name: 'Geidi', time: '7:00 pm - 9:00 pm' },
+                { clinic: 'SUNNYSIDE', task: 'SMS', name: 'Smarlyn', time: '7:00 pm - 9:00 pm' }
+            ],
+            FRI: [
+                { clinic: 'GALANIS', task: 'CALL FFS', name: 'Lindsy', time: '2:00 pm - 5:00 pm' },
+                { clinic: 'APONTE', task: 'CALL / REF', name: 'Oraymi / Waleska / Geidi', time: '10:00 am - 5:30 pm' },
+                { clinic: 'FIRST STEP', task: 'CALL', name: 'Geidi', time: '10:00 am - 1:00 pm' },
+                { clinic: 'UMO', task: 'CALL', name: 'Daihana', time: '11:00 am - 2:00 pm' },
+                { clinic: 'PATEL', task: 'CALL', name: 'Smarlyn', time: '1:00 pm - 4:00 pm' },
+                { clinic: 'STEPHEN', task: 'HEDIS', name: 'Geidi', time: '2:00 pm - 4:00 pm' },
+                { clinic: 'WILLIAM', task: 'HEDIS / CALL', name: 'Geidi / Daihana', time: '2:00 pm - 7:00 pm' },
+                { clinic: 'GMS', task: 'CALL', name: 'Jaris', time: '2:00 pm - 5:00 pm' },
+                { clinic: 'SUNNYSIDE', task: 'SMS', name: 'Smarlyn', time: '3:00 pm - 5:00 pm' }
+            ],
+            SUN: [
+                { clinic: 'GALANIS', task: 'RECERT / REF', name: 'Geidi / Lindsy', time: '10:00 am - 5:00 pm' },
+                { clinic: 'APONTE', task: 'RECERT', name: 'Geidi', time: '1:00 pm - 3:00 pm' },
+                { clinic: 'FIRST STEP', task: 'RECERT', name: 'Geidi', time: '4:00 pm - 6:00 pm' },
+                { clinic: 'Comprehensive', task: 'RECERT', name: 'Lindsy', time: '10:00 am - 12:00 pm' },
+                { clinic: 'JEROME', task: 'MISSED', name: 'Daihana', time: '9:00 am - 11:00 am' }
+            ]
+        };
+
+        // SYSTEM TIME & AUTOMATIC DAY DETECTOR
+        function getTodayCode() {
+            const daysMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+            const today = daysMap[new Date().getDay()];
+            return (today === 'SAT') ? 'MON' : today;
+        }
+
+        let activeDay = getTodayCode();
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('realtimeClock').textContent = now.toTimeString().split(' ')[0];
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // RENDER DAILY TABLE
+        function renderDailySchedule() {
+            const tbody = document.getElementById('dailyTableBody');
+            document.getElementById('dayTitleDisplay').textContent = activeDay;
+            document.getElementById('currentDayBadge').textContent = activeDay;
+            tbody.innerHTML = '';
+
+            const items = clinicSchedule[activeDay] || [];
+
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay turnos registrados para este día.</td></tr>';
+                return;
+            }
+
+            items.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="tag-clinic">${item.clinic}</td>
+                    <td><span class="tag-task">${item.task}</span></td>
+                    <td class="tag-person">${item.name}</td>
+                    <td><span class="tag-time">${item.time}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // RENDER PERSONAL TABLE
+        function renderPersonalTable() {
+            const tbody = document.getElementById('personalTableBody');
+            tbody.innerHTML = '';
+
+            staffRoster.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 800; color:#FFF;">${row.name}</td>
+                    <td class="${activeDay === 'MON' ? 'highlight-day-cell' : ''}">${row.MON}</td>
+                    <td class="${activeDay === 'TUE' ? 'highlight-day-cell' : ''}">${row.TUE}</td>
+                    <td class="${activeDay === 'WED' ? 'highlight-day-cell' : ''}">${row.WED}</td>
+                    <td class="${activeDay === 'THU' ? 'highlight-day-cell' : ''}">${row.THU}</td>
+                    <td class="${activeDay === 'FRI' ? 'highlight-day-cell' : ''}">${row.FRI}</td>
+                    <td class="${activeDay === 'SUN' ? 'highlight-day-cell' : ''}">${row.SUN}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SUN'].forEach(d => {
+                const th = document.getElementById(`col-${d}`);
+                if (th) {
+                    if (d === activeDay) {
+                        th.style.color = 'var(--accent-cyan)';
+                        th.style.borderBottom = '3px solid var(--accent-cyan)';
+                    } else {
+                        th.style.color = 'var(--text-secondary)';
+                        th.style.borderBottom = '2px solid var(--border)';
+                    }
+                }
+            });
+        }
+
+        // CONTROL FUNCTIONS
+        function switchDay(day) {
+            activeDay = day;
+            renderDailySchedule();
+            renderPersonalTable();
+        }
+
+        function activateTab(tabId, element) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            element.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // INITIALIZE APP
+        document.getElementById('daySelect').value = activeDay;
+        renderDailySchedule();
+        renderPersonalTable();
+    </script>
 </body>
 </html>
