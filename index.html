@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>Dashboard Control de Proyecto - TV Mode (Admin System)</title>
     <style>
         :root {
             --bg-main: #0B0F19;
             --bg-card: #151C2C;
-            --bg-card-alt: #1E293B; 
+            --bg-card-alt: #1E293B;
             --accent-cyan: #38BDF8;
             --accent-green: #22C55E;
             --accent-purple: #C084FC;
@@ -416,9 +413,7 @@
         </div>
 
         <div id="adminStatusContainer" style="display: flex; gap: 0.5rem; align-items: center;">
-            <button class="btn-export admin-only" onclick="guardarEnNube()">💾 Guardar en la Nube</button>
-            <span id="mensajeEstado" style="font-size: 0.85rem; font-weight: bold; color: var(--accent-cyan);"></span>
-
+            <button class="btn-export admin-only" onclick="exportHTML()">📥 Descargar HTML Actualizado</button>
             <button id="btnLogin" class="btn-login" onclick="openModal('modal-login')">🔒 Iniciar Sesión (Admin)</button>
             <div id="adminBadge" class="admin-badge logged-in" style="display: none;">
                 👤 Admin: <strong>chinese</strong>
@@ -433,7 +428,7 @@
         <!-- VIEW 1: DAILY PROGRAM -->
         <section id="tab-daily" class="tab-content active">
             <div class="alert-banner">
-                <h4 id="bannerTitle">📌 Mensajería Masiva Automática (SMS / WhatsApp) - Pisos Operativos</h4>
+                <h4 id="bannerTitle">📌 Mensajería Masiva Automática (SMS / WhatsApp)</h4>
                 <p id="bannerDesc">Campañas activas: Return to Care (Non-Utilizer) | Cervical Cancer Screening | Wellchild Visit</p>
             </div>
 
@@ -501,7 +496,7 @@
 
     </main>
 
-    <!-- MODALES -->
+    <!-- LOGIN MODAL -->
     <div id="modal-login" class="modal">
         <div class="modal-content">
             <h3 style="color: var(--accent-cyan);">Acceso Administrador</h3>
@@ -513,6 +508,7 @@
         </div>
     </div>
 
+    <!-- MODAL ADD STAFF -->
     <div id="modal-staff" class="modal">
         <div class="modal-content">
             <h3 style="color: var(--accent-cyan);">Agregar Nuevo Empleado</h3>
@@ -523,6 +519,7 @@
         </div>
     </div>
 
+    <!-- MODAL ADD DAILY CLINIC -->
     <div id="modal-daily" class="modal">
         <div class="modal-content">
             <h3 style="color: var(--accent-cyan);">Agregar Asignación Diaria</h3>
@@ -535,6 +532,7 @@
         </div>
     </div>
 
+    <!-- MODAL ADD CHAMPION -->
     <div id="modal-champion" class="modal">
         <div class="modal-content">
             <h3 style="color: var(--accent-cyan);">Agregar Group Champion</h3>
@@ -547,6 +545,7 @@
         </div>
     </div>
 
+    <!-- MODAL ADD ROLE -->
     <div id="modal-role" class="modal">
         <div class="modal-content">
             <h3 style="color: var(--accent-cyan);">Agregar Miembro / Rol</h3>
@@ -558,20 +557,18 @@
     </div>
 
     <script id="main-script">
-        const URL_GOOGLE_SCRIPT = 'https://script.google.com/macros/s/AKfycbxolePGTrAfuHURTeZnk4tZH5eykCP1YTXB8uEa5jaNT8h-ckwbS9VJsmAaFsm9lhTG/exec';
-
+        // MAPEO DE DÍAS A ESPAÑOL COMPLETO
         const spanishDays = {
-            MON: 'LUNES', TUE: 'MARTES', WED: 'MIÉRCOLES',
-            THU: 'JUEVES', FRI: 'VIERNES', SUN: 'DOMINGO'
+            MON: 'LUNES',
+            TUE: 'MARTES',
+            WED: 'MIÉRCOLES',
+            THU: 'JUEVES',
+            FRI: 'VIERNES',
+            SUN: 'DOMINGO'
         };
 
+        // ADMIN AUTHENTICATION - SIEMPRE DESACTIVADO POR DEFECTO
         let isAdmin = false;
-
-        // Estructuras de datos en memoria dinámica (se sincronizan directamente con la Nube)
-        let staffRoster = [];
-        let clinicSchedule = { MON: [], TUE: [], WED: [], THU: [], FRI: [], SUN: [] };
-        let championsData = [];
-        let rolesData = [];
 
         function loginAdmin() {
             const u = document.getElementById('loginUser').value;
@@ -579,7 +576,7 @@
 
             if (u === 'chinese' && p === '2122') {
                 isAdmin = true;
-                sessionStorage.setItem('isAdmin', 'true');
+                sessionStorage.setItem('isAdmin', 'true'); // Guardar solo para esta sesión de pestaña
                 applyAdminState();
                 closeModal('modal-login');
             } else {
@@ -606,8 +603,48 @@
             renderAll();
         }
 
+        // VERIFICAR SESIÓN DE ADMIN AL CARGAR
         if (sessionStorage.getItem('isAdmin') === 'true') {
             isAdmin = true;
+        }
+
+        // DEFAULT DATA STRUCTURES
+        let defaultStaffRoster = [
+            { name: 'GEIDI', breakTime: '1:00 PM - 2:00 PM', MON: '2 – 9pm', TUE: '10 – 5pm', WED: '10 – 1 / 2 – 9pm', THU: '10am – 9pm', FRI: '10 – 7pm', SUN: '11 – 4pm' },
+            { name: 'ORAYMI', breakTime: '2:00 PM - 3:00 PM', MON: '11am – 9pm', TUE: '11am – 9pm', WED: '9:00am – 6:00pm', THU: '11am – 9pm', FRI: '9am – 5pm', SUN: 'Risk?' },
+            { name: 'JARY', breakTime: '12:00 PM - 1:00 PM', MON: '9 AM – 3 PM', TUE: '9 AM – 4 PM', WED: '9 AM – 7 PM', THU: '9 AM – 4:30 PM', FRI: '9 AM – 7 PM', SUN: '-' }
+        ];
+
+        let defaultClinicSchedule = {
+            MON: [
+                { clinic: 'GALANIS', task: 'CALL', name: 'Oraymi', time: '11:00 am - 1:00 pm' },
+                { clinic: 'APONTE', task: 'CALL', name: 'Daihana', time: '11:00 am - 2:00 pm' }
+            ],
+            TUE: [], WED: [], THU: [], FRI: [], SUN: []
+        };
+
+        let defaultChampions = [
+            { name: '👑 Oraymi', role: 'Group Leader Cronos', desc: 'Lunes a Jueves (6 PM – 9 PM)', clinics: ['Junction', 'Florimon', 'NYPC', 'UMO', 'Stephen Perez', 'Fort Washington'] },
+            { name: '👑 Maria', role: 'Group Leader Horizonte', desc: 'Líder de Estrategia y Control Operativo', clinics: ['BCE', 'GODWIN', 'JOSE APONTE', 'TOMMY', 'AMERICA', 'COLUMBUS'] },
+            { name: '👑 Alberto', role: 'Group Leader Europa', desc: 'Supervisión General de Procesos', clinics: ['JAG', 'PATEL', 'JEROME', 'GENERAL', 'JANNY OZUNA', 'WILLIAMS BURG'] }
+        ];
+
+        let defaultRoles = [
+            { title: 'Geidi', tasks: ['Llamadas y mensajes: SMS, WhatsApp, Email.', 'Revisión de medidas exitosas.', 'Reporte de avances.'] },
+            { title: 'Jary', tasks: ['Recertificaciones.', 'Wellcare Track Agendas.', 'Apoyo a Email de Seguros.'] }
+        ];
+
+        // LOCAL STORAGE LOAD
+        let staffRoster = JSON.parse(localStorage.getItem('staffRoster')) || defaultStaffRoster;
+        let clinicSchedule = JSON.parse(localStorage.getItem('clinicSchedule')) || defaultClinicSchedule;
+        let championsData = JSON.parse(localStorage.getItem('championsData')) || defaultChampions;
+        let rolesData = JSON.parse(localStorage.getItem('rolesData')) || defaultRoles;
+
+        function saveAllData() {
+            localStorage.setItem('staffRoster', JSON.stringify(staffRoster));
+            localStorage.setItem('clinicSchedule', JSON.stringify(clinicSchedule));
+            localStorage.setItem('championsData', JSON.stringify(championsData));
+            localStorage.setItem('rolesData', JSON.stringify(rolesData));
         }
 
         function getTodayCode() {
@@ -618,6 +655,7 @@
 
         let activeDay = getTodayCode();
 
+        // 12-HOUR CLOCK FUNCTION WITH AM/PM
         function updateClock() {
             const now = new Date();
             let hours = now.getHours();
@@ -634,84 +672,7 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        function switchDay(day) {
-            activeDay = day;
-            document.getElementById('daySelect').value = day;
-            renderDailySchedule();
-            renderPersonalTable();
-        }
-
-        function activateTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
-        }
-
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        // --- CARGA DIRECTA Y REALTIME DE LA NUBE SIN CACHE ---
-        function cargarDesdeNube() {
-            const msg = document.getElementById('mensajeEstado');
-            msg.textContent = '🔄 Sincronizando...';
-            
-            // Forzar descarga sin cache añadiendo un timestamp aleatorio en la URL
-            const timestamp = new Date().getTime();
-            fetch(`${URL_GOOGLE_SCRIPT}?t=${timestamp}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data) {
-                        if (data.staffRoster) staffRoster = data.staffRoster;
-                        if (data.clinicSchedule) clinicSchedule = data.clinicSchedule;
-                        if (data.championsData) championsData = data.championsData;
-                        if (data.rolesData) rolesData = data.rolesData;
-                        renderAll();
-                        msg.textContent = '⚡ En Vivo';
-                        setTimeout(() => { msg.textContent = ''; }, 3000);
-                    }
-                })
-                .catch(err => {
-                    console.error('Error al descargar datos de la nube:', err);
-                    msg.textContent = '⚠️ Error Sincro';
-                });
-        }
-
-        function guardarEnNube() {
-            if (!isAdmin) return;
-            const msg = document.getElementById('mensajeEstado');
-            msg.textContent = '⏳ Guardando...';
-
-            const payload = {
-                staffRoster,
-                clinicSchedule,
-                championsData,
-                rolesData
-            };
-
-            fetch(URL_GOOGLE_SCRIPT, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(() => {
-                msg.textContent = '✅ Guardado Exitoso';
-                setTimeout(() => { msg.textContent = ''; }, 4000);
-            })
-            .catch(err => {
-                console.error(err);
-                msg.textContent = '❌ Error al Guardar';
-            });
-        }
-
-        function renderAll() {
-            renderDailySchedule();
-            renderPersonalTable();
-            renderChampions();
-            renderRoles();
-        }
-
+        // RENDER DAILY SCHEDULE
         function renderDailySchedule() {
             const tbody = document.getElementById('dailyTableBody');
             document.getElementById('dayTitleDisplay').textContent = spanishDays[activeDay] || activeDay;
@@ -726,18 +687,18 @@
             items.forEach((item, idx) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="tag-clinic" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'clinic', this.innerText)">${item.clinic || ''}</td>
-                    <td><span class="tag-task" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'task', this.innerText)">${item.task || ''}</span></td>
-                    <td class="tag-person" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'name', this.innerText)">${item.name || ''}</td>
-                    <td><span class="tag-time" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'time', this.innerText)">${item.time || ''}</span></td>
+                    <td class="tag-clinic" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'clinic', this.innerText)">${item.clinic}</td>
+                    <td><span class="tag-task" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'task', this.innerText)">${item.task}</span></td>
+                    <td class="tag-person" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'name', this.innerText)">${item.name}</td>
+                    <td><span class="tag-time" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'time', this.innerText)">${item.time}</span></td>
                     <td class="admin-only"><button class="btn-danger" onclick="deleteDailyAssignment(${idx})">🗑️</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function editDailyData(idx, key, val) { if (isAdmin) clinicSchedule[activeDay][idx][key] = val.trim(); }
-        function deleteDailyAssignment(idx) { if (isAdmin) { clinicSchedule[activeDay].splice(idx, 1); renderDailySchedule(); } }
+        function editDailyData(idx, key, val) { if (isAdmin) { clinicSchedule[activeDay][idx][key] = val.trim(); saveAllData(); } }
+        function deleteDailyAssignment(idx) { if (isAdmin) { clinicSchedule[activeDay].splice(idx, 1); saveAllData(); renderDailySchedule(); } }
 
         function addDailyAssignment() {
             if (!isAdmin) return;
@@ -748,11 +709,12 @@
 
             if (!clinicSchedule[activeDay]) clinicSchedule[activeDay] = [];
             clinicSchedule[activeDay].push({ clinic, task, name, time });
-            renderDailySchedule(); closeModal('modal-daily');
+            saveAllData(); renderDailySchedule(); closeModal('modal-daily');
             document.getElementById('newClinic').value = ''; document.getElementById('newTask').value = '';
             document.getElementById('newName').value = ''; document.getElementById('newTime').value = '';
         }
 
+        // RENDER PERSONAL TABLE
         function renderPersonalTable() {
             const tbody = document.getElementById('personalTableBody');
             tbody.innerHTML = '';
@@ -760,22 +722,22 @@
             staffRoster.forEach((row, idx) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="font-weight: 800; color:#FFF;" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'name', this.innerText)">${row.name || ''}</td>
+                    <td style="font-weight: 800; color:#FFF;" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'name', this.innerText)">${row.name}</td>
                     <td style="color: var(--accent-amber); font-weight:700;" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'breakTime', this.innerText)">${row.breakTime || '-'}</td>
-                    <td class="${activeDay === 'MON' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'MON', this.innerText)">${row.MON || '-'}</td>
-                    <td class="${activeDay === 'TUE' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'TUE', this.innerText)">${row.TUE || '-'}</td>
-                    <td class="${activeDay === 'WED' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'WED', this.innerText)">${row.WED || '-'}</td>
-                    <td class="${activeDay === 'THU' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'THU', this.innerText)">${row.THU || '-'}</td>
-                    <td class="${activeDay === 'FRI' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'FRI', this.innerText)">${row.FRI || '-'}</td>
-                    <td class="${activeDay === 'SUN' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'SUN', this.innerText)">${row.SUN || '-'}</td>
+                    <td class="${activeDay === 'MON' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'MON', this.innerText)">${row.MON}</td>
+                    <td class="${activeDay === 'TUE' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'TUE', this.innerText)">${row.TUE}</td>
+                    <td class="${activeDay === 'WED' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'WED', this.innerText)">${row.WED}</td>
+                    <td class="${activeDay === 'THU' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'THU', this.innerText)">${row.THU}</td>
+                    <td class="${activeDay === 'FRI' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'FRI', this.innerText)">${row.FRI}</td>
+                    <td class="${activeDay === 'SUN' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'SUN', this.innerText)">${row.SUN}</td>
                     <td class="admin-only"><button class="btn-danger" onclick="deleteStaff(${idx})">🗑️</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function editStaffData(idx, key, val) { if (isAdmin) staffRoster[idx][key] = val.trim(); }
-        function deleteStaff(idx) { if (isAdmin) { staffRoster.splice(idx, 1); renderPersonalTable(); } }
+        function editStaffData(idx, key, val) { if (isAdmin) { staffRoster[idx][key] = val.trim(); saveAllData(); } }
+        function deleteStaff(idx) { if (isAdmin) { staffRoster.splice(idx, 1); saveAllData(); renderPersonalTable(); } }
 
         function addStaff() {
             if (!isAdmin) return;
@@ -784,36 +746,44 @@
             if (!name) return;
 
             staffRoster.push({ name: name.toUpperCase(), breakTime: breakTime || '-', MON: '-', TUE: '-', WED: '-', THU: '-', FRI: '-', SUN: '-' });
-            renderPersonalTable(); closeModal('modal-staff');
+            saveAllData(); renderPersonalTable(); closeModal('modal-staff');
             document.getElementById('newStaffName').value = ''; document.getElementById('newStaffBreak').value = '';
         }
 
+        // RENDER GROUP CHAMPIONS
         function renderChampions() {
-            const grid = document.getElementById('championsGrid');
-            grid.innerHTML = '';
+            const container = document.getElementById('championsGrid');
+            container.innerHTML = '';
 
             championsData.forEach((champ, idx) => {
                 const card = document.createElement('div');
                 card.className = 'info-card';
-                let clinicsList = (champ.clinics || []).map(c => `<li>${c}</li>`).join('');
-
                 card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <h3 contenteditable="${isAdmin}" onblur="editChampData(${idx}, 'name', this.innerText)">${champ.name || ''}</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="color: var(--accent-cyan);" contenteditable="${isAdmin}" onblur="updateChampData(${idx}, 'name', this.innerText)">${champ.name}</h3>
                         <button class="btn-danger admin-only" onclick="deleteChampion(${idx})">🗑️</button>
                     </div>
-                    <div class="sub-role" contenteditable="${isAdmin}" onblur="editChampData(${idx}, 'role', this.innerText)">${champ.role || ''}</div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);" contenteditable="${isAdmin}" onblur="editChampData(${idx}, 'desc', this.innerText)">${champ.desc || ''}</p>
-                    <hr style="border-color: var(--border); margin: 0.3rem 0;">
-                    <strong style="font-size: 0.9rem; color: var(--accent-cyan);">Clínicas Asignadas:</strong>
-                    <ul class="custom-list">${clinicsList}</ul>
+                    <div class="sub-role" contenteditable="${isAdmin}" onblur="updateChampData(${idx}, 'role', this.innerText)">${champ.role}</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);" contenteditable="${isAdmin}" onblur="updateChampData(${idx}, 'desc', this.innerText)">${champ.desc}</p>
+                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
+                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
+                    <ul class="custom-list" contenteditable="${isAdmin}" onblur="updateChampClinics(${idx}, this)">
+                        ${champ.clinics.map(c => `<li>${c}</li>`).join('')}
+                    </ul>
                 `;
-                grid.appendChild(card);
+                container.appendChild(card);
             });
         }
 
-        function editChampData(idx, key, val) { if (isAdmin) championsData[idx][key] = val.trim(); }
-        function deleteChampion(idx) { if (isAdmin) { championsData.splice(idx, 1); renderChampions(); } }
+        function updateChampData(idx, key, val) { if (isAdmin) { championsData[idx][key] = val.trim(); saveAllData(); } }
+        function updateChampClinics(idx, ulElement) {
+            if (!isAdmin) return;
+            const clinics = [];
+            ulElement.querySelectorAll('li').forEach(li => { if (li.innerText.trim()) clinics.push(li.innerText.trim()); });
+            championsData[idx].clinics = clinics;
+            saveAllData();
+        }
+        function deleteChampion(idx) { if (isAdmin) { championsData.splice(idx, 1); saveAllData(); renderChampions(); } }
 
         function addChampionCard() {
             if (!isAdmin) return;
@@ -823,59 +793,120 @@
             const clinicsRaw = document.getElementById('newChampClinics').value;
 
             if (!name) return;
-            const clinics = clinicsRaw.split('\n').filter(c => c.trim() !== '');
+            const clinics = clinicsRaw.split('\n').filter(c => c.trim().length > 0);
+            championsData.push({ name, role, desc, clinics });
 
-            championsData.push({ name: `👑 ${name}`, role, desc, clinics });
-            renderChampions(); closeModal('modal-champion');
+            saveAllData(); renderChampions(); closeModal('modal-champion');
             document.getElementById('newChampName').value = ''; document.getElementById('newChampRole').value = '';
             document.getElementById('newChampDesc').value = ''; document.getElementById('newChampClinics').value = '';
         }
 
+        // RENDER ROLES & RESPONSIBILITIES
         function renderRoles() {
-            const grid = document.getElementById('rolesGrid');
-            grid.innerHTML = '';
+            const container = document.getElementById('rolesGrid');
+            container.innerHTML = '';
 
             rolesData.forEach((role, idx) => {
                 const card = document.createElement('div');
                 card.className = 'info-card';
-                let tasksList = (role.tasks || []).map(t => `<li>${t}</li>`).join('');
-
                 card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <h3 contenteditable="${isAdmin}" onblur="editRoleData(${idx}, 'title', this.innerText)">${role.title || ''}</h3>
-                        <button class="btn-danger admin-only" onclick="deleteRole(${idx})">🗑️</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="color: var(--accent-cyan);" contenteditable="${isAdmin}" onblur="updateRoleTitle(${idx}, this.innerText)">${role.title}</h3>
+                        <button class="btn-danger admin-only" onclick="deleteRoleCard(${idx})">🗑️</button>
                     </div>
-                    <hr style="border-color: var(--border); margin: 0.3rem 0;">
-                    <strong style="font-size: 0.9rem; color: var(--accent-cyan);">Responsabilidades:</strong>
-                    <ul class="custom-list">${tasksList}</ul>
+                    <ul class="custom-list" contenteditable="${isAdmin}" onblur="updateRoleTasks(${idx}, this)">
+                        ${role.tasks.map(t => `<li>${t}</li>`).join('')}
+                    </ul>
                 `;
-                grid.appendChild(card);
+                container.appendChild(card);
             });
         }
 
-        function editRoleData(idx, key, val) { if (isAdmin) rolesData[idx][key] = val.trim(); }
-        function deleteRole(idx) { if (isAdmin) { rolesData.splice(idx, 1); renderRoles(); } }
+        function updateRoleTitle(idx, text) { if (isAdmin) { rolesData[idx].title = text.trim(); saveAllData(); } }
+        function updateRoleTasks(idx, ulElement) {
+            if (!isAdmin) return;
+            const tasks = [];
+            ulElement.querySelectorAll('li').forEach(li => { if (li.innerText.trim()) tasks.push(li.innerText.trim()); });
+            rolesData[idx].tasks = tasks;
+            saveAllData();
+        }
+        function deleteRoleCard(idx) { if (isAdmin) { rolesData.splice(idx, 1); saveAllData(); renderRoles(); } }
 
         function addRoleCard() {
             if (!isAdmin) return;
             const title = document.getElementById('newRoleTitle').value;
             const tasksRaw = document.getElementById('newRoleTasks').value;
-
             if (!title) return;
-            const tasks = tasksRaw.split('\n').filter(t => t.trim() !== '');
 
+            const tasks = tasksRaw.split('\n').filter(t => t.trim().length > 0);
             rolesData.push({ title, tasks });
-            renderRoles(); closeModal('modal-role');
+
+            saveAllData(); renderRoles(); closeModal('modal-role');
             document.getElementById('newRoleTitle').value = ''; document.getElementById('newRoleTasks').value = '';
         }
 
-        // --- INICIALIZACIÓN ---
+        // EXPORT UPDATED HTML WITH INLINED DATA & FORCED USER MODE
+        function exportHTML() {
+            saveAllData();
+            
+            // Forzar logout antes de exportar
+            let wasAdmin = isAdmin;
+            isAdmin = false;
+            sessionStorage.removeItem('isAdmin');
+            applyAdminState();
+
+            let htmlCopy = document.documentElement.outerHTML;
+
+            // Limpiar clases de admin en la exportación
+            htmlCopy = htmlCopy.replace('<body class="is-admin">', '<body>');
+
+            htmlCopy = htmlCopy.replace(/let defaultStaffRoster = \[[\s\S]*?\];/, `let defaultStaffRoster = ${JSON.stringify(staffRoster, null, 4)};`);
+            htmlCopy = htmlCopy.replace(/let defaultClinicSchedule = \{[\s\S]*?\};/, `let defaultClinicSchedule = ${JSON.stringify(clinicSchedule, null, 4)};`);
+            htmlCopy = htmlCopy.replace(/let defaultChampions = \[[\s\S]*?\];/, `let defaultChampions = ${JSON.stringify(championsData, null, 4)};`);
+            htmlCopy = htmlCopy.replace(/let defaultRoles = \[[\s\S]*?\];/, `let defaultRoles = ${JSON.stringify(rolesData, null, 4)};`);
+
+            const blob = new Blob(["<!DOCTYPE html>\n" + htmlCopy], { type: "text/html" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "index.html";
+            a.click();
+
+            // Restaurar estado si estaba en admin
+            if (wasAdmin) {
+                isAdmin = true;
+                sessionStorage.setItem('isAdmin', 'true');
+                applyAdminState();
+            }
+        }
+
+        // CONTROL UTILS
+        function renderAll() {
+            renderDailySchedule();
+            renderPersonalTable();
+            renderChampions();
+            renderRoles();
+        }
+
+        function switchDay(day) {
+            activeDay = day;
+            renderDailySchedule();
+            renderPersonalTable();
+        }
+
+        function activateTab(tabId, element) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            element.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // INITIALIZE APP
         document.getElementById('daySelect').value = activeDay;
         applyAdminState();
-        cargarDesdeNube();
-
-        // Refresco automático continuo en tiempo real (Cada 15 segundos consulta a la Nube)
-        setInterval(cargarDesdeNube, 15000);
     </script>
 </body>
 </html>
