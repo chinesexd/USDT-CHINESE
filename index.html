@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Control de Proyecto - TV Mode</title>
+    <title>Dashboard Control de Proyecto - TV Mode (Admin System)</title>
     <style>
         :root {
             --bg-main: #0B0F19;
@@ -24,7 +24,6 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
         }
 
         body {
@@ -80,7 +79,6 @@
             align-items: center;
             gap: 0.5rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .live-dot {
@@ -101,7 +99,7 @@
         .header-controls {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1.2rem;
         }
 
         .day-select {
@@ -114,23 +112,29 @@
             font-weight: 800;
             outline: none;
             cursor: pointer;
-            box-shadow: 0 0 10px var(--glow);
         }
 
         .clock-box {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 900;
             color: #FFFFFF;
             background: rgba(15, 23, 42, 0.8);
             padding: 0.3rem 1.2rem;
             border-radius: 10px;
             border: 1px solid var(--border);
-            letter-spacing: 2px;
+            min-width: 220px;
+            text-align: center;
         }
 
         /* NAVIGATION TABS */
         .nav-tabs {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tabs-group {
             display: flex;
             gap: 0.8rem;
         }
@@ -155,7 +159,23 @@
             box-shadow: 0 0 15px var(--glow);
         }
 
-        /* MAIN CONTENT VIEWPORTS */
+        .admin-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-badge.logged-in {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        /* MAIN CONTENT VIEWS */
         main {
             flex: 1;
             overflow: hidden;
@@ -170,17 +190,10 @@
             padding-right: 0.4rem;
         }
 
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content.active { display: block; }
 
-        .tab-content::-webkit-scrollbar {
-            width: 6px;
-        }
-        .tab-content::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 3px;
-        }
+        .tab-content::-webkit-scrollbar { width: 6px; }
+        .tab-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
         /* BANNER ALERTS */
         .alert-banner {
@@ -189,24 +202,12 @@
             padding: 1rem 1.5rem;
             border-radius: 12px;
             margin-bottom: 1.25rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .alert-banner h4 {
-            color: var(--accent-purple);
-            font-size: 1.1rem;
-            font-weight: 800;
-            margin-bottom: 0.2rem;
-        }
+        .alert-banner h4 { color: var(--accent-purple); font-size: 1.1rem; font-weight: 800; margin-bottom: 0.2rem; }
+        .alert-banner p { color: var(--text-primary); font-size: 0.95rem; }
 
-        .alert-banner p {
-            color: var(--text-primary);
-            font-size: 0.95rem;
-        }
-
-        /* TABLE DESIGN */
+        /* TABLES */
         .card-table {
             background: var(--bg-card);
             border-radius: 16px;
@@ -225,38 +226,25 @@
             align-items: center;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
+        table { width: 100%; border-collapse: collapse; text-align: left; }
         th {
             background: rgba(15, 23, 42, 0.7);
             color: var(--text-secondary);
-            padding: 0.9rem 1.2rem;
+            padding: 0.9rem 1rem;
             font-size: 0.85rem;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
             border-bottom: 2px solid var(--border);
         }
+        td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
 
-        td {
-            padding: 1rem 1.2rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 1.05rem;
+        td[contenteditable="true"]:focus {
+            outline: 2px solid var(--accent-cyan);
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 4px;
         }
 
-        tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .tag-clinic {
-            font-weight: 800;
-            color: #FFFFFF;
-        }
-
+        .tag-clinic { font-weight: 800; color: #FFFFFF; }
         .tag-task {
             background: rgba(245, 158, 11, 0.15);
             color: var(--accent-amber);
@@ -266,12 +254,7 @@
             font-size: 0.85rem;
             font-weight: 800;
         }
-
-        .tag-person {
-            font-weight: 700;
-            color: var(--accent-cyan);
-        }
-
+        .tag-person { font-weight: 700; color: var(--accent-cyan); }
         .tag-time {
             font-family: 'Courier New', Courier, monospace;
             background: var(--bg-card-alt);
@@ -279,10 +262,9 @@
             border-radius: 6px;
             border: 1px solid var(--border);
             color: #FFFFFF;
-            font-weight: 700;
         }
 
-        /* GRID CARDS FOR CHAMPIONS & RESPONSIBILITIES */
+        /* GRID CARDS FOR CHAMPIONS & ROLES */
         .grid-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -297,30 +279,14 @@
             display: flex;
             flex-direction: column;
             gap: 0.8rem;
+            position: relative;
+            border-left: 6px solid var(--accent-cyan);
         }
 
-        .info-card.champion-oraymi { border-left: 6px solid var(--accent-cyan); }
-        .info-card.champion-maria { border-left: 6px solid var(--accent-green); }
-        .info-card.champion-alberto { border-left: 6px solid var(--accent-amber); }
+        .info-card h3 { font-size: 1.4rem; font-weight: 800; }
+        .info-card .sub-role { font-size: 0.95rem; font-weight: 700; color: var(--accent-purple); }
 
-        .info-card h3 {
-            font-size: 1.4rem;
-            font-weight: 800;
-        }
-
-        .info-card .sub-role {
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .custom-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
+        .custom-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
         .custom-list li {
             font-size: 0.95rem;
             color: var(--text-secondary);
@@ -328,13 +294,7 @@
             align-items: center;
             gap: 0.5rem;
         }
-
-        .custom-list li::before {
-            content: "•";
-            color: var(--accent-cyan);
-            font-size: 1.5rem;
-            line-height: 0;
-        }
+        .custom-list li::before { content: "•"; color: var(--accent-cyan); font-size: 1.5rem; line-height: 0; }
 
         .highlight-day-cell {
             background: rgba(56, 189, 248, 0.12) !important;
@@ -342,11 +302,85 @@
             font-weight: 800;
             color: #FFFFFF;
         }
+
+        /* BUTTONS & MODALS */
+        .admin-only { display: none !important; }
+        body.is-admin .admin-only { display: inline-flex !important; }
+
+        .btn-action {
+            background: var(--accent-cyan);
+            color: #0B0F19;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .btn-action:hover { opacity: 0.9; }
+
+        .btn-export {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .btn-export:hover { background: rgba(34, 197, 94, 0.3); }
+
+        .btn-login {
+            background: var(--bg-card-alt);
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background: rgba(251, 113, 133, 0.2);
+            color: var(--accent-rose);
+            border: 1px solid var(--accent-rose);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 800;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .modal-content input, .modal-content textarea {
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border);
+            color: #FFF;
+            padding: 0.7rem;
+            border-radius: 8px;
+            outline: none;
+        }
     </style>
 </head>
 <body>
 
-    <!-- CONTROL BAR TOP -->
+    <!-- TOP HEADER -->
     <header>
         <div class="header-title-container">
             <h1 class="header-title">Clínicas de Llamadas Activas</h1>
@@ -356,7 +390,7 @@
             </div>
         </div>
         <div class="header-controls">
-            <label for="daySelect" style="font-weight: 700; color: var(--text-secondary);">DÍA MOSTRADO:</label>
+            <label for="daySelect" style="font-weight: 700; color: var(--text-secondary);">DÍA:</label>
             <select id="daySelect" class="day-select" onchange="switchDay(this.value)">
                 <option value="MON">LUNES</option>
                 <option value="TUE">MARTES</option>
@@ -365,245 +399,231 @@
                 <option value="FRI">VIERNES</option>
                 <option value="SUN">DOMINGO</option>
             </select>
-            <div id="realtimeClock" class="clock-box">00:00:00</div>
+            <div id="realtimeClock" class="clock-box">12:00:00 AM</div>
         </div>
     </header>
 
-    <!-- TAB NAVIGATION BAR -->
+    <!-- NAVIGATION BAR & ADMIN STATUS -->
     <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="activateTab('tab-daily', this)">📅 Programa del Día (<span id="currentDayBadge">HOY</span>)</button>
-        <button class="tab-btn" onclick="activateTab('tab-personal', this)">👥 Horario Semanal Personal</button>
-        <button class="tab-btn" onclick="activateTab('tab-champions', this)">👑 Group Champions</button>
-        <button class="tab-btn" onclick="activateTab('tab-responsabilidades', this)">📋 Responsabilidades y Roles</button>
+        <div class="tabs-group">
+            <button class="tab-btn active" onclick="activateTab('tab-daily', this)">📅 Programa del Día (<span id="currentDayBadge">HOY</span>)</button>
+            <button class="tab-btn" onclick="activateTab('tab-personal', this)">👥 Horario Semanal Personal</button>
+            <button class="tab-btn" onclick="activateTab('tab-champions', this)">👑 Group Champions</button>
+            <button class="tab-btn" onclick="activateTab('tab-responsabilidades', this)">📋 Responsabilidades y Roles</button>
+        </div>
+
+        <div id="adminStatusContainer" style="display: flex; gap: 0.5rem; align-items: center;">
+            <button class="btn-export admin-only" onclick="exportHTML()">📥 Descargar HTML Actualizado</button>
+            <button id="btnLogin" class="btn-login" onclick="openModal('modal-login')">🔒 Iniciar Sesión (Admin)</button>
+            <div id="adminBadge" class="admin-badge logged-in" style="display: none;">
+                👤 Admin: <strong>chinese</strong>
+                <button class="btn-danger" style="margin-left: 0.5rem;" onclick="logoutAdmin()">Salir</button>
+            </div>
+        </div>
     </nav>
 
-    <!-- CONTENT VIEWS -->
+    <!-- MAIN VIEWPORTS -->
     <main>
 
-        <!-- VIEW 1: DAILY CLINIC SCHEDULE -->
+        <!-- VIEW 1: DAILY PROGRAM -->
         <section id="tab-daily" class="tab-content active">
             <div class="alert-banner">
-                <div>
-                    <h4>📌 Mensajería Masiva Automática (SMS / WhatsApp)</h4>
-                    <p>Campañas activas: Return to Care (Non-Utilizer) | Cervical Cancer Screening | Wellchild Visit</p>
-                </div>
+                <h4 id="bannerTitle">📌 Mensajería Masiva Automática (SMS / WhatsApp)</h4>
+                <p id="bannerDesc">Campañas activas: Return to Care (Non-Utilizer) | Cervical Cancer Screening | Wellchild Visit</p>
             </div>
 
             <div class="card-table">
                 <div class="table-header-title">
                     <span>Asignaciones de Llamadas - <span id="dayTitleDisplay" style="color: var(--accent-amber);">LUNES</span></span>
+                    <button class="btn-action admin-only" onclick="openModal('modal-daily')">+ Agregar Asignación</button>
                 </div>
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 25%;">Clínica</th>
+                            <th style="width: 20%;">Clínica</th>
                             <th style="width: 20%;">Área / Tarea</th>
-                            <th style="width: 30%;">Responsable</th>
+                            <th style="width: 25%;">Responsable</th>
                             <th style="width: 25%;">Horario Programado</th>
+                            <th class="admin-only" style="width: 10%;">Acción</th>
                         </tr>
                     </thead>
-                    <tbody id="dailyTableBody">
-                        <!-- Filled by Javascript -->
-                    </tbody>
+                    <tbody id="dailyTableBody"></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- VIEW 2: FULL PERSONAL SCHEDULE -->
+        <!-- VIEW 2: PERSONAL SCHEDULE -->
         <section id="tab-personal" class="tab-content">
             <div class="card-table">
-                <div class="table-header-title">Horario Semanal de Turnos de Personal</div>
+                <div class="table-header-title">
+                    <span>Horario Semanal de Turnos de Personal</span>
+                    <button class="btn-action admin-only" onclick="openModal('modal-staff')">+ Agregar Empleado</button>
+                </div>
                 <table>
                     <thead>
                         <tr>
                             <th>Personal</th>
+                            <th style="color: var(--accent-amber);">RECESO</th>
                             <th id="col-MON">LUNES</th>
                             <th id="col-TUE">MARTES</th>
                             <th id="col-WED">MIÉRCOLES</th>
                             <th id="col-THU">JUEVES</th>
                             <th id="col-FRI">VIERNES</th>
                             <th id="col-SUN">DOMINGO</th>
+                            <th class="admin-only">Acción</th>
                         </tr>
                     </thead>
-                    <tbody id="personalTableBody">
-                        <!-- Filled by Javascript -->
-                    </tbody>
+                    <tbody id="personalTableBody"></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- VIEW 3: GROUP CHAMPIONS -->
+        <!-- VIEW 3: CHAMPIONS -->
         <section id="tab-champions" class="tab-content">
-            <div class="grid-3">
-                <div class="info-card champion-oraymi">
-                    <h3 style="color: var(--accent-cyan);">👑 Oraymi</h3>
-                    <div class="sub-role" style="color: var(--accent-cyan);">Group Champion – Group Leader Cronos</div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Lunes a Jueves (6 PM – 9 PM): Recertificación Todos los Seguros, HealthFirst EP 90 Días, HEDIS Rosters.</p>
-                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
-                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
-                    <ul class="custom-list">
-                        <li>Junction</li>
-                        <li>Florimon</li>
-                        <li>NYPC</li>
-                        <li>UMO</li>
-                        <li>Stephen Perez</li>
-                        <li>Fort Washington (One Stop, First Step, Millennium)</li>
-                    </ul>
-                </div>
-
-                <div class="info-card champion-maria">
-                    <h3 style="color: var(--accent-green);">👑 Maria</h3>
-                    <div class="sub-role" style="color: var(--accent-green);">Group Champion – Group Leader Horizonte</div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Líder de Estrategia y Control Operativo Horizonte.</p>
-                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
-                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
-                    <ul class="custom-list">
-                        <li>BCE</li>
-                        <li>GODWIN</li>
-                        <li>JOSE APONTE</li>
-                        <li>TOMMY</li>
-                        <li>AMERICA</li>
-                        <li>COLUMBUS (Guillen)</li>
-                    </ul>
-                </div>
-
-                <div class="info-card champion-alberto">
-                    <h3 style="color: var(--accent-amber);">👑 Alberto</h3>
-                    <div class="sub-role" style="color: var(--accent-amber);">Group Champion – Group Leader Europa</div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Supervisión General de Procesos e Integración.</p>
-                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
-                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
-                    <ul class="custom-list">
-                        <li>JAG</li>
-                        <li>PATEL</li>
-                        <li>JEROME</li>
-                        <li>GENERAL</li>
-                        <li>JANNY OZUNA</li>
-                        <li>WILLIAMS BURG</li>
-                    </ul>
-                </div>
+            <div style="margin-bottom: 1rem; display: flex; justify-content: flex-end;">
+                <button class="btn-action admin-only" onclick="openModal('modal-champion')">+ Agregar Champion</button>
             </div>
+            <div class="grid-3" id="championsGrid"></div>
         </section>
 
-        <!-- VIEW 4: ROLES AND TASKS -->
+        <!-- VIEW 4: ROLES AND RESPONSIBILITIES -->
         <section id="tab-responsabilidades" class="tab-content">
-            <div class="grid-3">
-                <div class="info-card">
-                    <h3 style="color: var(--accent-cyan);">Geidi</h3>
-                    <ul class="custom-list">
-                        <li>Llamadas y mensajes: SMS, WhatsApp, Email.</li>
-                        <li>Revisión de medidas exitosas en semana de ciencias asignadas.</li>
-                        <li>Reporte de avances: Citas agendadas, asistencias y medidas cerradas.</li>
-                    </ul>
-                </div>
-
-                <div class="info-card">
-                    <h3 style="color: var(--accent-cyan);">Liz</h3>
-                    <ul class="custom-list">
-                        <li>Llamadas y mensajes: SMS, WhatsApp, Email.</li>
-                        <li>Revisión de medidas exitosas en semana de ciencias asignadas.</li>
-                        <li>Reporte de avances: Citas agendadas, asistencias y medidas cerradas.</li>
-                    </ul>
-                </div>
-
-                <div class="info-card">
-                    <h3 style="color: var(--accent-purple);">Jary</h3>
-                    <ul class="custom-list">
-                        <li>Recertificaciones.</li>
-                        <li>Wellcare Track Agendas.</li>
-                        <li>Apoyo a Email de Seguros.</li>
-                        <li>Llamadas en Inglés.</li>
-                        <li>Apoyo EBO.</li>
-                    </ul>
-                </div>
+            <div style="margin-bottom: 1rem; display: flex; justify-content: flex-end;">
+                <button class="btn-action admin-only" onclick="openModal('modal-role')">+ Agregar Nuevo Rol / Miembro</button>
             </div>
+            <div class="grid-3" id="rolesGrid"></div>
         </section>
 
     </main>
 
-    <script>
-        // DATA STRUCTURE FOR PERSONAL SCHEDULE
-        const staffRoster = [
-            { name: 'GEIDI', MON: '2 – 9pm', TUE: '10 – 5pm', WED: '10 – 1 / 2 – 9pm', THU: '10am – 9pm', FRI: '10 – 7pm', SUN: '11 – 4pm' },
-            { name: 'ORAYMI', MON: '11am – 9pm', TUE: '11am – 9pm', WED: '9:00am – 6:00pm', THU: '11am – 9pm', FRI: '9am – 5pm', SUN: 'Risk?' },
-            { name: 'JARY', MON: '9 AM – 3 PM', TUE: '9 AM – 4 PM', WED: '9 AM – 7 PM', THU: '9 AM – 4:30 PM', FRI: '9 AM – 7 PM', SUN: '-' },
-            { name: 'ANDRY', MON: '3:00 – 8:00pm', TUE: '3:00 – 8:00pm', WED: '3:00 – 8:00pm', THU: '3:00 – 8:00pm', FRI: '-', SUN: '1pm – 6pm' },
-            { name: 'WALESKA', MON: '10am – 6pm', TUE: '10am – 6pm', WED: '10am – 6pm', THU: '10am – 6pm', FRI: '9am – 5pm', SUN: '-' },
-            { name: 'SMAILYN', MON: '11:00 – 7:00pm', TUE: '1:00 – 9:00pm', WED: '1:00 – 9:00pm', THU: '1:00 – 9:00pm', FRI: '11am – 4pm', SUN: '10:00 – 1:00pm' },
-            { name: 'DAHIANA', MON: '11am – 7pm', TUE: '11am – 7pm', WED: '12pm – 8pm', THU: '11am – 7pm', FRI: '9am – 5pm', SUN: '-' },
-            { name: 'LINDSY', MON: '-', TUE: '1pm – 9pm', WED: '11am – 7pm', THU: '1pm – 9pm', FRI: '11am – 7pm', SUN: '10am – 6pm' }
+    <!-- LOGIN MODAL -->
+    <div id="modal-login" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--accent-cyan);">Acceso Administrador</h3>
+            <input type="text" id="loginUser" placeholder="Usuario">
+            <input type="password" id="loginPass" placeholder="Contraseña">
+            <p id="loginError" style="color: var(--accent-rose); font-size: 0.85rem; display: none;">Usuario o contraseña incorrectos.</p>
+            <button class="btn-action" onclick="loginAdmin()">Ingresar</button>
+            <button class="btn-danger" onclick="closeModal('modal-login')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL ADD STAFF -->
+    <div id="modal-staff" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--accent-cyan);">Agregar Nuevo Empleado</h3>
+            <input type="text" id="newStaffName" placeholder="Nombre del Empleado">
+            <input type="text" id="newStaffBreak" placeholder="Horario de Receso (Ej: 1:00 PM - 2:00 PM)">
+            <button class="btn-action" onclick="addStaff()">Guardar Empleado</button>
+            <button class="btn-danger" onclick="closeModal('modal-staff')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL ADD DAILY CLINIC -->
+    <div id="modal-daily" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--accent-cyan);">Agregar Asignación Diaria</h3>
+            <input type="text" id="newClinic" placeholder="Clínica">
+            <input type="text" id="newTask" placeholder="Área / Tarea (Ej: CALL, HEDIS)">
+            <input type="text" id="newName" placeholder="Responsable">
+            <input type="text" id="newTime" placeholder="Horario (Ej: 11:00 am - 1:00 pm)">
+            <button class="btn-action" onclick="addDailyAssignment()">Guardar Asignación</button>
+            <button class="btn-danger" onclick="closeModal('modal-daily')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL ADD CHAMPION -->
+    <div id="modal-champion" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--accent-cyan);">Agregar Group Champion</h3>
+            <input type="text" id="newChampName" placeholder="Nombre (Ej: Oraymi)">
+            <input type="text" id="newChampRole" placeholder="Sub-Rol (Ej: Group Leader Cronos)">
+            <input type="text" id="newChampDesc" placeholder="Horario/Descripción corta">
+            <textarea id="newChampClinics" rows="4" placeholder="Clínicas Asignadas (Una por línea)"></textarea>
+            <button class="btn-action" onclick="addChampionCard()">Guardar Champion</button>
+            <button class="btn-danger" onclick="closeModal('modal-champion')">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL ADD ROLE -->
+    <div id="modal-role" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--accent-cyan);">Agregar Miembro / Rol</h3>
+            <input type="text" id="newRoleTitle" placeholder="Nombre (Ej: Geidi / Supervisor)">
+            <textarea id="newRoleTasks" rows="5" placeholder="Tareas (Una por línea)"></textarea>
+            <button class="btn-action" onclick="addRoleCard()">Guardar Rol</button>
+            <button class="btn-danger" onclick="closeModal('modal-role')">Cancelar</button>
+        </div>
+    </div>
+
+    <script id="main-script">
+        // ADMIN AUTHENTICATION
+        let isAdmin = false;
+
+        function loginAdmin() {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+
+            if (u === 'chinese' && p === '2122') {
+                isAdmin = true;
+                document.body.classList.add('is-admin');
+                document.getElementById('btnLogin').style.display = 'none';
+                document.getElementById('adminBadge').style.display = 'flex';
+                document.getElementById('loginError').style.display = 'none';
+                closeModal('modal-login');
+                renderAll();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        function logoutAdmin() {
+            isAdmin = false;
+            document.body.classList.remove('is-admin');
+            document.getElementById('btnLogin').style.display = 'inline-block';
+            document.getElementById('adminBadge').style.display = 'none';
+            renderAll();
+        }
+
+        // DEFAULT DATA STRUCTURES
+        let defaultStaffRoster = [
+            { name: 'GEIDI', breakTime: '1:00 PM - 2:00 PM', MON: '2 – 9pm', TUE: '10 – 5pm', WED: '10 – 1 / 2 – 9pm', THU: '10am – 9pm', FRI: '10 – 7pm', SUN: '11 – 4pm' },
+            { name: 'ORAYMI', breakTime: '2:00 PM - 3:00 PM', MON: '11am – 9pm', TUE: '11am – 9pm', WED: '9:00am – 6:00pm', THU: '11am – 9pm', FRI: '9am – 5pm', SUN: 'Risk?' },
+            { name: 'JARY', breakTime: '12:00 PM - 1:00 PM', MON: '9 AM – 3 PM', TUE: '9 AM – 4 PM', WED: '9 AM – 7 PM', THU: '9 AM – 4:30 PM', FRI: '9 AM – 7 PM', SUN: '-' }
         ];
 
-        // DATA STRUCTURE FOR CLINIC CALLS SCHEDULE
-        const clinicSchedule = {
+        let defaultClinicSchedule = {
             MON: [
                 { clinic: 'GALANIS', task: 'CALL', name: 'Oraymi', time: '11:00 am - 1:00 pm' },
-                { clinic: 'APONTE', task: 'CALL', name: 'Daihana', time: '11:00 am - 2:00 pm' },
-                { clinic: 'FIRST STEP', task: 'CALL', name: 'Smailyn', time: '3:00 pm - 7:00 pm' },
-                { clinic: 'UMO', task: 'HEDIS', name: 'Geidi', time: '2:00 pm - 5:00 pm' },
-                { clinic: 'GENERIC', task: 'SDH / RISK', name: 'Daihana / Jary', time: '3:00 pm - 7:00 pm' },
-                { clinic: 'PATEL', task: 'CALL', name: 'Smailyn', time: '11:00 am - 1:00 pm' },
-                { clinic: 'STEPHEN', task: 'HEDIS', name: 'Geidi', time: '5:00 pm - 8:00 pm' },
-                { clinic: 'WILLIAM', task: 'CALL', name: 'Daihana', time: '2:00 pm - 5:00 pm' },
-                { clinic: 'JEROME', task: 'MISSED', name: 'Oraymi', time: '6:00 pm - 7:00 pm' },
-                { clinic: 'GMS', task: 'HEDIS', name: 'Geidi', time: '8:00 pm - 9:00 pm' }
+                { clinic: 'APONTE', task: 'CALL', name: 'Daihana', time: '11:00 am - 2:00 pm' }
             ],
-            TUE: [
-                { clinic: 'GALANIS', task: 'CALL', name: 'Oraymi', time: '11:00 am - 1:00 pm' },
-                { clinic: 'APONTE', task: 'CALL', name: 'Waleska', time: '10:00 am - 12:00 pm' },
-                { clinic: 'FIRST STEP', task: 'CALL', name: 'Jaris', time: '3:00 pm - 5:00 pm' },
-                { clinic: 'UMO', task: 'HEDIS', name: 'Geidi (3hrs)', time: '10:00 am - 2:00 pm' },
-                { clinic: 'GENERIC', task: 'PCMH / RISK', name: 'Waleska / Jary / Oraymi', time: '3:00 pm - 9:00 pm' },
-                { clinic: 'PATEL', task: 'CALL', name: 'Daihana', time: '1:00 pm - 4:00 pm' },
-                { clinic: 'STEPHEN', task: 'HEDIS', name: 'Geidi (3hrs)', time: '3:00 pm - 5:00 pm' },
-                { clinic: 'WILLIAM', task: 'CALL', name: 'Lindsy', time: '6:00 pm - 9:00 pm' },
-                { clinic: 'GMS', task: 'CALL', name: 'Daihana', time: '11:00 pm - 1:00 pm' },
-                { clinic: 'FW', task: 'CALL', name: 'Lindsy', time: '1:00 pm - 3:00 pm' }
-            ],
-            WED: [
-                { clinic: 'GALANIS', task: 'CALL / REF', name: 'Smarlyn / Lindsy', time: '5:00 pm - 9:00 pm' },
-                { clinic: 'APONTE', task: 'CALL / REF', name: 'Smarlyn', time: '1:00 pm - 5:00 pm' },
-                { clinic: 'FIRST STEP', task: 'CALL', name: 'Waleska', time: '10:00 am - 12:00 pm' },
-                { clinic: 'UMO', task: 'CALL', name: 'Oraymi', time: '1:00 pm - 2:00 pm' },
-                { clinic: 'GENERIC', task: 'TRAN / RX / SDH', name: 'Jaris / Lindsy / Daihana', time: '3:00 pm - 9:00 pm' },
-                { clinic: 'PATEL', task: 'CALL', name: 'Jaris', time: '3:00 pm - 5:00 pm' },
-                { clinic: 'STEPHEN', task: 'HEDIS', name: 'Geidi', time: '3:00 pm - 5:00 pm' },
-                { clinic: 'WILLIAM', task: 'HEDIS / SMS', name: 'Geidi / Smarlyn', time: '10:00 am - 7:00 pm' },
-                { clinic: 'JEROME', task: 'MISSED', name: 'Waleska', time: '5:00 pm - 6:00 pm' },
-                { clinic: 'GMS', task: 'CALL / SMS', name: 'Daihana / Lindsy', time: '3:00 pm - 8:00 pm' }
-            ],
-            THU: [
-                { clinic: 'GALANIS', task: 'CALL', name: 'Smarlyn', time: '5:00 pm - 9:00 pm' },
-                { clinic: 'APONTE', task: 'CALL / REF', name: 'Jaris / Jary', time: '3:00 pm - 9:00 pm' },
-                { clinic: 'FIRST STEP', task: 'CALL', name: 'Lindsy', time: '3:00 pm - 5:00 pm' },
-                { clinic: 'Comprehensive', task: 'SMS', name: 'Daihana', time: '5:00 pm - 7:00 pm' },
-                { clinic: 'UMO', task: 'HEDIS', name: 'Geidi', time: '10:00 am - 12:00 pm' },
-                { clinic: 'PATEL', task: 'CALL', name: 'Geidi', time: '12:00 pm - 4:00 pm' },
-                { clinic: 'WILLIAM', task: 'CALL', name: 'Jaris / Daihana', time: '11:00 am - 7:00 pm' },
-                { clinic: 'JEROME', task: 'MISSED', name: 'Geidi', time: '7:00 pm - 9:00 pm' },
-                { clinic: 'SUNNYSIDE', task: 'SMS', name: 'Smarlyn', time: '7:00 pm - 9:00 pm' }
-            ],
-            FRI: [
-                { clinic: 'GALANIS', task: 'CALL FFS', name: 'Lindsy', time: '2:00 pm - 5:00 pm' },
-                { clinic: 'APONTE', task: 'CALL / REF', name: 'Oraymi / Waleska / Geidi', time: '10:00 am - 5:30 pm' },
-                { clinic: 'FIRST STEP', task: 'CALL', name: 'Geidi', time: '10:00 am - 1:00 pm' },
-                { clinic: 'UMO', task: 'CALL', name: 'Daihana', time: '11:00 am - 2:00 pm' },
-                { clinic: 'PATEL', task: 'CALL', name: 'Smarlyn', time: '1:00 pm - 4:00 pm' },
-                { clinic: 'STEPHEN', task: 'HEDIS', name: 'Geidi', time: '2:00 pm - 4:00 pm' },
-                { clinic: 'WILLIAM', task: 'HEDIS / CALL', name: 'Geidi / Daihana', time: '2:00 pm - 7:00 pm' },
-                { clinic: 'GMS', task: 'CALL', name: 'Jaris', time: '2:00 pm - 5:00 pm' },
-                { clinic: 'SUNNYSIDE', task: 'SMS', name: 'Smarlyn', time: '3:00 pm - 5:00 pm' }
-            ],
-            SUN: [
-                { clinic: 'GALANIS', task: 'RECERT / REF', name: 'Geidi / Lindsy', time: '10:00 am - 5:00 pm' },
-                { clinic: 'APONTE', task: 'RECERT', name: 'Geidi', time: '1:00 pm - 3:00 pm' },
-                { clinic: 'FIRST STEP', task: 'RECERT', name: 'Geidi', time: '4:00 pm - 6:00 pm' },
-                { clinic: 'Comprehensive', task: 'RECERT', name: 'Lindsy', time: '10:00 am - 12:00 pm' },
-                { clinic: 'JEROME', task: 'MISSED', name: 'Daihana', time: '9:00 am - 11:00 am' }
-            ]
+            TUE: [], WED: [], THU: [], FRI: [], SUN: []
         };
 
-        // SYSTEM TIME & AUTOMATIC DAY DETECTOR
+        let defaultChampions = [
+            { name: '👑 Oraymi', role: 'Group Leader Cronos', desc: 'Lunes a Jueves (6 PM – 9 PM)', clinics: ['Junction', 'Florimon', 'NYPC', 'UMO', 'Stephen Perez', 'Fort Washington'] },
+            { name: '👑 Maria', role: 'Group Leader Horizonte', desc: 'Líder de Estrategia y Control Operativo', clinics: ['BCE', 'GODWIN', 'JOSE APONTE', 'TOMMY', 'AMERICA', 'COLUMBUS'] },
+            { name: '👑 Alberto', role: 'Group Leader Europa', desc: 'Supervisión General de Procesos', clinics: ['JAG', 'PATEL', 'JEROME', 'GENERAL', 'JANNY OZUNA', 'WILLIAMS BURG'] }
+        ];
+
+        let defaultRoles = [
+            { title: 'Geidi', tasks: ['Llamadas y mensajes: SMS, WhatsApp, Email.', 'Revisión de medidas exitosas.', 'Reporte de avances.'] },
+            { title: 'Jary', tasks: ['Recertificaciones.', 'Wellcare Track Agendas.', 'Apoyo a Email de Seguros.'] }
+        ];
+
+        // LOCAL STORAGE LOAD
+        let staffRoster = JSON.parse(localStorage.getItem('staffRoster')) || defaultStaffRoster;
+        let clinicSchedule = JSON.parse(localStorage.getItem('clinicSchedule')) || defaultClinicSchedule;
+        let championsData = JSON.parse(localStorage.getItem('championsData')) || defaultChampions;
+        let rolesData = JSON.parse(localStorage.getItem('rolesData')) || defaultRoles;
+
+        function saveAllData() {
+            localStorage.setItem('staffRoster', JSON.stringify(staffRoster));
+            localStorage.setItem('clinicSchedule', JSON.stringify(clinicSchedule));
+            localStorage.setItem('championsData', JSON.stringify(championsData));
+            localStorage.setItem('rolesData', JSON.stringify(rolesData));
+        }
+
         function getTodayCode() {
             const daysMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
             const today = daysMap[new Date().getDay()];
@@ -612,14 +632,24 @@
 
         let activeDay = getTodayCode();
 
+        // 12-HOUR CLOCK FUNCTION WITH AM/PM
         function updateClock() {
             const now = new Date();
-            document.getElementById('realtimeClock').textContent = now.toTimeString().split(' ')[0];
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours % 12;
+            hours = hours ? hours : 12; // La hora '0' pasa a ser '12'
+            const formattedHours = String(hours).padStart(2, '0');
+
+            document.getElementById('realtimeClock').textContent = `${formattedHours}:${minutes}:${seconds} ${ampm}`;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // RENDER DAILY TABLE
+        // RENDER DAILY SCHEDULE
         function renderDailySchedule() {
             const tbody = document.getElementById('dailyTableBody');
             document.getElementById('dayTitleDisplay').textContent = activeDay;
@@ -627,22 +657,39 @@
             tbody.innerHTML = '';
 
             const items = clinicSchedule[activeDay] || [];
-
             if (items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay turnos registrados para este día.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay turnos registrados.</td></tr>';
                 return;
             }
 
-            items.forEach(item => {
+            items.forEach((item, idx) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="tag-clinic">${item.clinic}</td>
-                    <td><span class="tag-task">${item.task}</span></td>
-                    <td class="tag-person">${item.name}</td>
-                    <td><span class="tag-time">${item.time}</span></td>
+                    <td class="tag-clinic" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'clinic', this.innerText)">${item.clinic}</td>
+                    <td><span class="tag-task" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'task', this.innerText)">${item.task}</span></td>
+                    <td class="tag-person" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'name', this.innerText)">${item.name}</td>
+                    <td><span class="tag-time" contenteditable="${isAdmin}" onblur="editDailyData(${idx}, 'time', this.innerText)">${item.time}</span></td>
+                    <td class="admin-only"><button class="btn-danger" onclick="deleteDailyAssignment(${idx})">🗑️</button></td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function editDailyData(idx, key, val) { if (isAdmin) { clinicSchedule[activeDay][idx][key] = val.trim(); saveAllData(); } }
+        function deleteDailyAssignment(idx) { if (isAdmin) { clinicSchedule[activeDay].splice(idx, 1); saveAllData(); renderDailySchedule(); } }
+
+        function addDailyAssignment() {
+            if (!isAdmin) return;
+            const clinic = document.getElementById('newClinic').value;
+            const task = document.getElementById('newTask').value;
+            const name = document.getElementById('newName').value;
+            const time = document.getElementById('newTime').value;
+
+            if (!clinicSchedule[activeDay]) clinicSchedule[activeDay] = [];
+            clinicSchedule[activeDay].push({ clinic, task, name, time });
+            saveAllData(); renderDailySchedule(); closeModal('modal-daily');
+            document.getElementById('newClinic').value = ''; document.getElementById('newTask').value = '';
+            document.getElementById('newName').value = ''; document.getElementById('newTime').value = '';
         }
 
         // RENDER PERSONAL TABLE
@@ -650,35 +697,158 @@
             const tbody = document.getElementById('personalTableBody');
             tbody.innerHTML = '';
 
-            staffRoster.forEach(row => {
+            staffRoster.forEach((row, idx) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="font-weight: 800; color:#FFF;">${row.name}</td>
-                    <td class="${activeDay === 'MON' ? 'highlight-day-cell' : ''}">${row.MON}</td>
-                    <td class="${activeDay === 'TUE' ? 'highlight-day-cell' : ''}">${row.TUE}</td>
-                    <td class="${activeDay === 'WED' ? 'highlight-day-cell' : ''}">${row.WED}</td>
-                    <td class="${activeDay === 'THU' ? 'highlight-day-cell' : ''}">${row.THU}</td>
-                    <td class="${activeDay === 'FRI' ? 'highlight-day-cell' : ''}">${row.FRI}</td>
-                    <td class="${activeDay === 'SUN' ? 'highlight-day-cell' : ''}">${row.SUN}</td>
+                    <td style="font-weight: 800; color:#FFF;" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'name', this.innerText)">${row.name}</td>
+                    <td style="color: var(--accent-amber); font-weight:700;" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'breakTime', this.innerText)">${row.breakTime || '-'}</td>
+                    <td class="${activeDay === 'MON' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'MON', this.innerText)">${row.MON}</td>
+                    <td class="${activeDay === 'TUE' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'TUE', this.innerText)">${row.TUE}</td>
+                    <td class="${activeDay === 'WED' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'WED', this.innerText)">${row.WED}</td>
+                    <td class="${activeDay === 'THU' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'THU', this.innerText)">${row.THU}</td>
+                    <td class="${activeDay === 'FRI' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'FRI', this.innerText)">${row.FRI}</td>
+                    <td class="${activeDay === 'SUN' ? 'highlight-day-cell' : ''}" contenteditable="${isAdmin}" onblur="editStaffData(${idx}, 'SUN', this.innerText)">${row.SUN}</td>
+                    <td class="admin-only"><button class="btn-danger" onclick="deleteStaff(${idx})">🗑️</button></td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
 
-            ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SUN'].forEach(d => {
-                const th = document.getElementById(`col-${d}`);
-                if (th) {
-                    if (d === activeDay) {
-                        th.style.color = 'var(--accent-cyan)';
-                        th.style.borderBottom = '3px solid var(--accent-cyan)';
-                    } else {
-                        th.style.color = 'var(--text-secondary)';
-                        th.style.borderBottom = '2px solid var(--border)';
-                    }
-                }
+        function editStaffData(idx, key, val) { if (isAdmin) { staffRoster[idx][key] = val.trim(); saveAllData(); } }
+        function deleteStaff(idx) { if (isAdmin) { staffRoster.splice(idx, 1); saveAllData(); renderPersonalTable(); } }
+
+        function addStaff() {
+            if (!isAdmin) return;
+            const name = document.getElementById('newStaffName').value;
+            const breakTime = document.getElementById('newStaffBreak').value;
+            if (!name) return;
+
+            staffRoster.push({ name: name.toUpperCase(), breakTime: breakTime || '-', MON: '-', TUE: '-', WED: '-', THU: '-', FRI: '-', SUN: '-' });
+            saveAllData(); renderPersonalTable(); closeModal('modal-staff');
+            document.getElementById('newStaffName').value = ''; document.getElementById('newStaffBreak').value = '';
+        }
+
+        // RENDER GROUP CHAMPIONS
+        function renderChampions() {
+            const container = document.getElementById('championsGrid');
+            container.innerHTML = '';
+
+            championsData.forEach((champ, idx) => {
+                const card = document.createElement('div');
+                card.className = 'info-card';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="color: var(--accent-cyan);" contenteditable="${isAdmin}" onblur="updateChampData(${idx}, 'name', this.innerText)">${champ.name}</h3>
+                        <button class="btn-danger admin-only" onclick="deleteChampion(${idx})">🗑️</button>
+                    </div>
+                    <div class="sub-role" contenteditable="${isAdmin}" onblur="updateChampData(${idx}, 'role', this.innerText)">${champ.role}</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);" contenteditable="${isAdmin}" onblur="updateChampData(${idx}, 'desc', this.innerText)">${champ.desc}</p>
+                    <hr style="border-color: var(--border); margin: 0.5rem 0;">
+                    <strong style="color: #FFF; font-size: 0.9rem;">Clínicas Asignadas:</strong>
+                    <ul class="custom-list" contenteditable="${isAdmin}" onblur="updateChampClinics(${idx}, this)">
+                        ${champ.clinics.map(c => `<li>${c}</li>`).join('')}
+                    </ul>
+                `;
+                container.appendChild(card);
             });
         }
 
-        // CONTROL FUNCTIONS
+        function updateChampData(idx, key, val) { if (isAdmin) { championsData[idx][key] = val.trim(); saveAllData(); } }
+        function updateChampClinics(idx, ulElement) {
+            if (!isAdmin) return;
+            const clinics = [];
+            ulElement.querySelectorAll('li').forEach(li => { if (li.innerText.trim()) clinics.push(li.innerText.trim()); });
+            championsData[idx].clinics = clinics;
+            saveAllData();
+        }
+        function deleteChampion(idx) { if (isAdmin) { championsData.splice(idx, 1); saveAllData(); renderChampions(); } }
+
+        function addChampionCard() {
+            if (!isAdmin) return;
+            const name = document.getElementById('newChampName').value;
+            const role = document.getElementById('newChampRole').value;
+            const desc = document.getElementById('newChampDesc').value;
+            const clinicsRaw = document.getElementById('newChampClinics').value;
+
+            if (!name) return;
+            const clinics = clinicsRaw.split('\n').filter(c => c.trim().length > 0);
+            championsData.push({ name, role, desc, clinics });
+
+            saveAllData(); renderChampions(); closeModal('modal-champion');
+            document.getElementById('newChampName').value = ''; document.getElementById('newChampRole').value = '';
+            document.getElementById('newChampDesc').value = ''; document.getElementById('newChampClinics').value = '';
+        }
+
+        // RENDER ROLES & RESPONSIBILITIES
+        function renderRoles() {
+            const container = document.getElementById('rolesGrid');
+            container.innerHTML = '';
+
+            rolesData.forEach((role, idx) => {
+                const card = document.createElement('div');
+                card.className = 'info-card';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="color: var(--accent-cyan);" contenteditable="${isAdmin}" onblur="updateRoleTitle(${idx}, this.innerText)">${role.title}</h3>
+                        <button class="btn-danger admin-only" onclick="deleteRoleCard(${idx})">🗑️</button>
+                    </div>
+                    <ul class="custom-list" contenteditable="${isAdmin}" onblur="updateRoleTasks(${idx}, this)">
+                        ${role.tasks.map(t => `<li>${t}</li>`).join('')}
+                    </ul>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateRoleTitle(idx, text) { if (isAdmin) { rolesData[idx].title = text.trim(); saveAllData(); } }
+        function updateRoleTasks(idx, ulElement) {
+            if (!isAdmin) return;
+            const tasks = [];
+            ulElement.querySelectorAll('li').forEach(li => { if (li.innerText.trim()) tasks.push(li.innerText.trim()); });
+            rolesData[idx].tasks = tasks;
+            saveAllData();
+        }
+        function deleteRoleCard(idx) { if (isAdmin) { rolesData.splice(idx, 1); saveAllData(); renderRoles(); } }
+
+        function addRoleCard() {
+            if (!isAdmin) return;
+            const title = document.getElementById('newRoleTitle').value;
+            const tasksRaw = document.getElementById('newRoleTasks').value;
+            if (!title) return;
+
+            const tasks = tasksRaw.split('\n').filter(t => t.trim().length > 0);
+            rolesData.push({ title, tasks });
+
+            saveAllData(); renderRoles(); closeModal('modal-role');
+            document.getElementById('newRoleTitle').value = ''; document.getElementById('newRoleTasks').value = '';
+        }
+
+        // EXPORT UPDATED HTML WITH INLINED DATA
+        function exportHTML() {
+            saveAllData();
+            let htmlCopy = document.documentElement.outerHTML;
+
+            // Inyectar datos actuales directamente en los arreglos por defecto
+            htmlCopy = htmlCopy.replace(/let defaultStaffRoster = \[[\s\S]*?\];/, `let defaultStaffRoster = ${JSON.stringify(staffRoster, null, 4)};`);
+            htmlCopy = htmlCopy.replace(/let defaultClinicSchedule = \{[\s\S]*?\};/, `let defaultClinicSchedule = ${JSON.stringify(clinicSchedule, null, 4)};`);
+            htmlCopy = htmlCopy.replace(/let defaultChampions = \[[\s\S]*?\];/, `let defaultChampions = ${JSON.stringify(championsData, null, 4)};`);
+            htmlCopy = htmlCopy.replace(/let defaultRoles = \[[\s\S]*?\];/, `let defaultRoles = ${JSON.stringify(rolesData, null, 4)};`);
+
+            const blob = new Blob(["<!DOCTYPE html>\n" + htmlCopy], { type: "text/html" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "index.html";
+            a.click();
+        }
+
+        // CONTROL UTILS
+        function renderAll() {
+            renderDailySchedule();
+            renderPersonalTable();
+            renderChampions();
+            renderRoles();
+        }
+
         function switchDay(day) {
             activeDay = day;
             renderDailySchedule();
@@ -693,10 +863,12 @@
             document.getElementById(tabId).classList.add('active');
         }
 
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
         // INITIALIZE APP
         document.getElementById('daySelect').value = activeDay;
-        renderDailySchedule();
-        renderPersonalTable();
+        renderAll();
     </script>
 </body>
 </html>
